@@ -1,12 +1,8 @@
 import React from "react";
 import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
-import Navbar2 from "./Navbar2";
-import Footer from "./Footer";
 import { motion } from "framer-motion";
 import { GlowingEffectDemo } from "./glowing-effect";
 import { GlowingEffect } from "./ui/glowing-effect";
-import Spline from "@splinetool/react-spline";
-import { SparklesPreview } from "./sparkles";
 import { TextHoverEffect } from "./ui/text-hover-effect";
 import { AnimatedTooltipPreview } from "./Connect-team";
 import { WavyBackground } from "./ui/wavy-background";
@@ -15,15 +11,18 @@ import {
   TextRevealCardDescription,
   TextRevealCardTitle,
 } from "./ui/text-reveal-card";
+
+
+
 const Home: React.FC = () => {
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-black/10 text-white">
+      
       {/* Background */}
       <ShootingStarsAndStarsBackgroundDemo />
 
-      {/* Hero Section */}
+      {/* Wavy section */}
       <section className="relative z-10 flex flex-col lg:flex-row items-center justify-between max-w-7xl mx-auto px-6 pt-20">
-        {/* Left - Text */}
         <div className="flex-1 space-y-6 justify-between items-center text-center">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -37,7 +36,7 @@ const Home: React.FC = () => {
               <TextHoverEffect text="We Built It" />
             </div>
           </motion.h1>
-          {/* <motion.p
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
@@ -45,8 +44,9 @@ const Home: React.FC = () => {
           >
             Unlock your hidden potential. Discover skills you didn’t know you
             had. Let AI craft your roadmap to mastery.
-          </motion.p> */}
+          </motion.p>
           <div className="flex items-center justify-center bg-transparent h-[10rem] rounded-2xl w-full py-15">
+            
             <TextRevealCard
               text="Empower Your Skills With"
               revealText="NEXTskills"
@@ -62,7 +62,33 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
-      {/* <WavyBackground /> */}
+      <WavyBackground />
+
+      {/* Roadmap Teaser */}
+      <section className="relative z-10 max-w-6xl mx-auto px-6 py-14">
+        <motion.div
+          initial={{ x: -100, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="flex justify-center"
+        >
+          <div className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            {[
+              { step: "Step 1", label: "Unlock Potential" },
+              { step: "Step 2", label: "Face The Test" },
+              { step: "Step 3", label: "The Path Revealed" },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="p-6 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
+              >
+                <h3 className="text-xl font-bold text-blue-500">{item.step}</h3>
+                <p className="text-gray-400 mt-2">{item.label}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
       <div
         className="relative h-[140vh] bg-contain bg-center bg-no-repeat flex items-center justify-center"
@@ -70,40 +96,21 @@ const Home: React.FC = () => {
           backgroundImage: `url('/spacebgimage.jpg')`,
         }}
       >
-        <div className="flex justify-center items-center relative z-10 p-10 bg-black/90">
+        <div className="flex justify-center items-center relative z-10 p-10 w-[300vh]">
           {/* Screen Frame */}
           <div className="relative w-full max-w-4xl bg-gradient-to-br from-gray-800 via-gray-900 to-black border-4 border-gray-700 rounded-3xl p-8 shadow-2xl">
             {/* Screen Bezel */}
-            <div className="relative w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 border-2 border-gray-800 rounded-2xl overflow-hidden">
+            <div className="relative w-full h-full bg-gradient-to-br bg-black/80 border-2 border-gray-800 rounded-2xl overflow-hidden">
               {/* Subtle Scanlines Effect */}
               <div className="absolute inset-0 opacity-20">
                 <div className="w-full h-full bg-gradient-to-b from-transparent via-blue-500/5 to-transparent animate-pulse"></div>
               </div>
 
               {/* Screen Content */}
-              <div className="relative z-10 flex flex-col items-center justify-center h-full p-12 text-center">
+              <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center">
                 {/* Main Text */}
                 <div className="mb-12 space-y-6">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight">
-                    Unlock your{" "}
-                    <span className="text-blue-400 font-medium">
-                      hidden potential
-                    </span>
-                    .
-                  </h1>
-
-                  <p className="text-xl md:text-2xl text-gray-300 font-light leading-relaxed max-w-2xl">
-                    Discover skills you didn't know you had.
-                  </p>
-
-                  <p className="text-lg md:text-xl text-gray-400 font-light leading-relaxed max-w-2xl">
-                    Let AI craft your roadmap to mastery.
-                  </p>
-                </div>
-
-                {/* Terminal-style Cursor */}
-                <div className="mb-8">
-                  <span className="inline-block w-3 h-6 bg-blue-400 animate-pulse"></span>
+                  <img src="/spacebgimage.jpg" alt="" className="h-[60vh]" />
                 </div>
 
                 {/* Get Started Button */}
@@ -163,32 +170,6 @@ const Home: React.FC = () => {
         <div className="w-2xs m-auto border-wh ite border-3 my-8"></div>
         <h2>Connect With Team</h2>
         <AnimatedTooltipPreview />
-      </section>
-
-      {/* Roadmap Teaser */}
-      <section className="relative z-10 max-w-6xl mx-auto px-6 py-14">
-        <motion.div
-          initial={{ x: -100, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="flex justify-center"
-        >
-          <div className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            {[
-              { step: "Step 1", label: "Unlock Potential" },
-              { step: "Step 2", label: "Face The Test" },
-              { step: "Step 3", label: "The Path Revealed" },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="p-6 bg-white/5 rounded-xl border border-white/10 hover:bg-white/10 transition-all duration-300"
-              >
-                <h3 className="text-xl font-bold text-blue-500">{item.step}</h3>
-                <p className="text-gray-400 mt-2">{item.label}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
       </section>
     </div>
   );

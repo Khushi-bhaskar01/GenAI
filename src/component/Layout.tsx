@@ -1,21 +1,21 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
-import Navbar2 from "./Navbar2";
+import NavbarLogin from "./NavbarLogin";
 import Dashboard from "./Dahsboard";
+import Footer from "./Footer";
 import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
-import { Divide } from "lucide-react";
 
 const Layout = () => {
-  const loggedin = false;
+  const loggedin = true;
   const [showVideo, setShowVideo] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  // For intro video at just starting of the page
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowVideo(false);
-    }, 2000); // <-- duration of your video (ms)
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -29,13 +29,17 @@ const Layout = () => {
           autoPlay
           muted
           playsInline
-          onEnded={() => setShowVideo(false)} // also hides after video ends
+          onEnded={() => setShowVideo(false)}
         />
       ) : (
         <>
           <ShootingStarsAndStarsBackgroundDemo />
           <div className="relative w-full min-h-screen">
-            {loggedin ? <Navbar2 /> : <Navbar />}
+            {loggedin ? (
+              <NavbarLogin onProfileClick={() => setIsProfileOpen(true)} /> 
+            ) : (
+              <Navbar />
+            )}
             <Dashboard
               isOpen={isProfileOpen}
               onClose={() => setIsProfileOpen(false)}

@@ -10,7 +10,7 @@ interface NavbarProps {
   userName?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+const NavbarLogin: React.FC<NavbarProps> = ({
   onProfileClick,
   onHomeClick,
   onRoadmapClick,
@@ -82,4 +82,4 @@ const Navbar: React.FC<NavbarProps> = ({
   );
 };
 
-export default Navbar;
+export default NavbarLogin;
