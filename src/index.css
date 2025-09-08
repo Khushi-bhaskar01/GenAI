@@ -1,11 +1,15 @@
 @import "tailwindcss";
 
+
 html,
 body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
+  /* overflow-y: hidden; */
+  /* background-color: black; */
   /* overflow: hidden; Prevents scrolling */
 }
 
@@ -17,3 +21,18 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+.audiowide-regular {
+  font-family: "Audiowide", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* *{
+  font-family: audiowide-regular;
+} */
+
+*:not(p) {
+  font-family: audiowide-regular;
+}
+
+

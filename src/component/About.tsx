@@ -16,6 +16,9 @@ import {
   Clock,
   Award,
 } from "lucide-react";
+import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
+import Navbar from "./NavbarLogin";
+import NavbarLogin from "./Navbar";
 
 const NEXTskillLanding: React.FC = () => {
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);
@@ -119,6 +122,8 @@ const NEXTskillLanding: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
+        <ShootingStarsAndStarsBackgroundDemo/>
+        <NavbarLogin />
       {/* Hero Section */}
       <section className="relative py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">

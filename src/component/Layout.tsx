@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Navbar from "./Navbar";
-import NavbarLogin from "./NavbarLogin";
+import Navbar from "./NavbarLogin";
+import NavbarLogin from "./Navbar";
 import Dashboard from "./Dahsboard";
 import Footer from "./Footer";
 import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
@@ -24,7 +24,7 @@ const Layout = () => {
     <div className="w-full h-screen">
       {showVideo ? (
         <video
-          className="w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover"
           src="/Nextskill.mp4"
           autoPlay
           muted
@@ -36,7 +36,7 @@ const Layout = () => {
           <ShootingStarsAndStarsBackgroundDemo />
           <div className="relative w-full min-h-screen">
             {loggedin ? (
-              <NavbarLogin onProfileClick={() => setIsProfileOpen(true)} /> 
+              <NavbarLogin onProfileClick={() => setIsProfileOpen(true)} />
             ) : (
               <Navbar />
             )}

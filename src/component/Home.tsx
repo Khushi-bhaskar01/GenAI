@@ -1,4 +1,7 @@
 import React from "react";
+import "./../../src/index.css";
+import {GoArrowUpRight} from 'react-icons/go'
+import { useNavigate } from "react-router-dom";
 import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
 import { motion } from "framer-motion";
 import { GlowingEffectDemo } from "./glowing-effect";
@@ -11,13 +14,12 @@ import {
   TextRevealCardDescription,
   TextRevealCardTitle,
 } from "./ui/text-reveal-card";
-
-
+import { HoverBorderGradient } from "./ui/hover-border-gradient";
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-black/10 text-white">
-      
       {/* Background */}
       <ShootingStarsAndStarsBackgroundDemo />
 
@@ -28,7 +30,7 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="text-5xl lg:text-6xl font-bold leading-tight"
+            className="text-5xl lg:text-6xl font-bold leading-tight audiowide-regular"
           >
             We Don’t Show You the Future <br />
             <div className="w-3xl m-auto border-white border-3 mt-6"></div>
@@ -40,31 +42,31 @@ const Home: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
-            className="text-gray-400 text-lg max-w-lg m-auto"
+            className="text-gray-400 text-lg max-w-lg m-auto gugi-regular"
           >
             Unlock your hidden potential. Discover skills you didn’t know you
             had. Let AI craft your roadmap to mastery.
           </motion.p>
-          <div className="flex items-center justify-center bg-transparent h-[10rem] rounded-2xl w-full py-15">
-            
+          {/* <div className="flex items-center justify-center bg-transparent h-[10rem] rounded-2xl w-full py-15">
+            Revealing card
             <TextRevealCard
               text="Empower Your Skills With"
               revealText="NEXTskills"
             >
-              {/* <TextRevealCardTitle>
+              <TextRevealCardTitle>
               Sometimes, you just need to see it.
             </TextRevealCardTitle>
             <TextRevealCardDescription>
               This is a text reveal card. Hover over the card to reveal the
               hidden text.
-            </TextRevealCardDescription>  */}
+            </TextRevealCardDescription> 
             </TextRevealCard>
-          </div>
+          </div> */}
         </div>
       </section>
       <WavyBackground />
 
-      {/* Roadmap Teaser */}
+      {/* Roadmap divs */}
       <section className="relative z-10 max-w-6xl mx-auto px-6 py-14">
         <motion.div
           initial={{ x: -100, opacity: 0 }}
@@ -90,69 +92,57 @@ const Home: React.FC = () => {
         </motion.div>
       </section>
 
+      {/* Assessment moniter */}
       <div
         className="relative h-[140vh] bg-contain bg-center bg-no-repeat flex items-center justify-center"
         style={{
           backgroundImage: `url('/spacebgimage.jpg')`,
         }}
       >
-        <div className="flex justify-center items-center relative z-10 p-10 w-[300vh]">
-          {/* Screen Frame */}
-          <div className="relative w-full max-w-4xl bg-gradient-to-br from-gray-800 via-gray-900 to-black border-4 border-gray-700 rounded-3xl p-8 shadow-2xl">
-            {/* Screen Bezel */}
-            <div className="relative w-full h-full bg-gradient-to-br bg-black/80 border-2 border-gray-800 rounded-2xl overflow-hidden">
-              {/* Subtle Scanlines Effect */}
-              <div className="absolute inset-0 opacity-20">
-                <div className="w-full h-full bg-gradient-to-b from-transparent via-blue-500/5 to-transparent animate-pulse"></div>
-              </div>
-
-              {/* Screen Content */}
-              <div className="relative z-10 flex flex-col items-center justify-center h-full p-4 text-center">
-                {/* Main Text */}
-                <div className="mb-12 space-y-6">
-                  <img src="/spacebgimage.jpg" alt="" className="h-[60vh]" />
-                </div>
-
-                {/* Get Started Button */}
-                <button className="group relative px-12 py-4 bg-transparent border-2 border-gray-600 text-white font-medium text-lg rounded-lg transition-all duration-300 hover:border-gray-400 hover:bg-gray-900/50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
-                  <span className="relative z-10">Get Started</span>
-
-                  {/* Button Background Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-gray-800/0 via-gray-700/20 to-gray-800/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </button>
-
-                {/* Bottom Status Bar */}
-                <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center text-xs text-gray-500">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>System Ready</span>
+        <div className="flex flex-col justify-center items-center relative z-10 mt-30">
+          <div className="bg-transparent shadow-[0_0_80px_40px_rgba(0,0,0,1)]">
+            <div className="pt-15 rounded-2xl px-20 bg-gradient-to-b from-black from to-70% via-black/80 via-80% to-black/30 to-100%">
+              <div className="px-10 rounded-2xl bg-gradient-to-b from-white/10 from to-70% via-black/80 via-80% to-black/30 to-100%">
+                <div
+                  className="w-[110vh] h-[100vh] bg-gradient-to-b from-black from-70% via-black/80 via-80% to-slate-900/20 to-100% bg-contain bg-center bg-no-repeat"
+                  style={{
+                    backgroundImage: `url('/spacebgimage.jpg')`,
+                  }}
+                >
+                  <div className="flex items-center justify-center bg-transparent h-[10rem] rounded-2xl w-full pt-55 pb-30">
+                    <TextRevealCard
+                      text="Empower Your Skills With"
+                      revealText="NEXTskills"
+                    >
+                      <TextRevealCardTitle>
+                        Sometimes, you just need to see it.
+                      </TextRevealCardTitle>
+                      <TextRevealCardDescription>
+                        This is a text reveal card. Hover over the card to
+                        reveal the hidden text.
+                      </TextRevealCardDescription>
+                    </TextRevealCard>
                   </div>
 
-                  <div className="flex items-center space-x-4">
-                    <span>AI Engine: Active</span>
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                  {/* button */}
+                  <div className="flex justify-center items-center">
+                    <HoverBorderGradient onClick={()=>{navigate("/skill")}}>
+                      <div className=" bg-black flex justify-between items-center gap-4">
+                        <p className="text-5xl">Get Started</p>
+                        <div className="w-14 h-14 bg-blue-500 rounded-full flex justify-between items-center hover:bg-blue-700">
+                          <GoArrowUpRight className="m-auto hover:scale-110" size={40}/>
+                        </div>
+                      </div> 
+                    </HoverBorderGradient>
                   </div>
                 </div>
-              </div>
-
-              {/* Corner Details */}
-              <div className="absolute top-4 right-4 text-xs text-gray-600 font-mono">
-                v2.1.0
-              </div>
-
-              <div className="absolute top-4 left-4 text-xs text-gray-600 font-mono">
-                NEXTskill
               </div>
             </div>
-
-            {/* Screen Stand */}
-            <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-32 h-4 bg-gradient-to-b from-gray-700 to-gray-900 rounded-b-lg"></div>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-4 bg-gradient-to-b from-gray-800 to-gray-900 rounded-full"></div>
           </div>
         </div>
       </div>
 
-      {/* AI Whispers Section */}
+      {/* AI Whispers*/}
       <section className="relative z-10 max-w-5xl mx-auto px-6 pt-14 text-center space-y-8">
         <motion.h2
           initial={{ opacity: 0 }}
@@ -169,6 +159,8 @@ const Home: React.FC = () => {
         </div>
         <div className="w-2xs m-auto border-wh ite border-3 my-8"></div>
         <h2>Connect With Team</h2>
+
+        {/* Connect with team */}
         <AnimatedTooltipPreview />
       </section>
     </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { Plus, X, Target, FileText, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface Skill {
   id: string;
@@ -108,6 +109,8 @@ const SkillMonitoringPage: React.FC = () => {
     }
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen p-6 pt-25 font-sans">
       <div className="max-w-7xl mx-auto">
@@ -167,12 +170,12 @@ const SkillMonitoringPage: React.FC = () => {
             </h2>
             
             <div className="space-y-4">
-              <button className="w-full py-4 px-6 bg-transparent border-2 border-blue-500 text-white rounded-xl hover:bg-blue-500/10 transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-3">
+              <button onClick={()=>{navigate("/assessment")}} className="w-full py-4 px-6 bg-transparent border-2 border-blue-500 text-white rounded-xl hover:bg-blue-500/10 transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-3">
                 <FileText className="w-6 h-6" />
                 Take Assessment
               </button>
               
-              <button className="w-full py-4 px-6 bg-black/30 border border-gray-600 text-white rounded-xl hover:border-blue-500 hover:bg-blue-500/5 transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-3">
+              <button onClick={()=>{navigate("/resume")}} className="w-full py-4 px-6 bg-black/30 border border-gray-600 text-white rounded-xl hover:border-blue-500 hover:bg-blue-500/5 transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-3">
                 <TrendingUp className="w-6 h-6" />
                 Resume Analyzer
               </button>

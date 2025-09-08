@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
-import Navbar from "./Navbar";
+import Navbar from "./NavbarLogin";
 
 interface LoginPageProps {
   onLoginSubmit?: (email: string, password: string) => void;
