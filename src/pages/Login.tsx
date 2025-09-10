@@ -1,25 +1,37 @@
+
 import React, { useState } from "react";
-import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
-import Navbar from "./NavbarLogin";
+import { ShootingStarsAndStarsBackgroundDemo } from "../component/starbackground";
+import Navbar from "../component/NavbarLogin";
+import { useNavigate } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { app } from "../firebase/firebase";
 
-interface LoginPageProps {
-  onLoginSubmit?: (email: string, password: string) => void;
-  onSignUpClick?: () => void;
-  onForgotPasswordClick?: () => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({
-  onLoginSubmit,
-  onSignUpClick,
-  onForgotPasswordClick,
-}) => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    if (email && password) {
-      onLoginSubmit?.(email, password);
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      alert("Enter the credentials");
+      return;
+    }
+    try {
+      const auth = getAuth(app);
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Login Successful!");
+      navigate("/"); // redirect after login
+    } catch (error: any) {
+      if (error.code === "auth/user-not-found") {
+        alert("User not found. Please sign up first.");
+      } else if (error.code === "auth/wrong-password") {
+        alert("Incorrect password. Try again.");
+      } else if (error.code === "auth/invalid-email") {
+        alert("Please enter a valid email address.");
+      } else {
+        alert(error.message);
+      }
     }
   };
 
@@ -32,11 +44,10 @@ const LoginPage: React.FC<LoginPageProps> = ({
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex items-center justify-center px-4 py-8  z-20 inset-0 fixed">
+      <div className="min-h-screen flex items-center justify-center px-4 py-8 z-20 inset-0 fixed">
         <ShootingStarsAndStarsBackgroundDemo />
-        {/* Login Container */}
         <div className="w-full max-w-md bg-black/20 backdrop-blur-md border border-white/10 shadow-lg rounded-lg p-8">
-          {/* NEXTskill Logo */}
+          {/* Logo */}
           <div className="text-center mb-8">
             <div className="text-3xl font-bold select-none mb-2">
               <span className="text-gray-100">NEXT</span>
@@ -63,8 +74,8 @@ const LoginPage: React.FC<LoginPageProps> = ({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-gray-400 backdrop-blur-sm focus:bg-black/60 focus:border-blue-400 focus:outline-none transition-all duration-300"
                 placeholder="Enter your email"
+                className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-gray-400 backdrop-blur-sm focus:bg-black/60 focus:border-blue-400 focus:outline-none transition-all duration-300"
               />
             </div>
 
@@ -83,8 +94,8 @@ const LoginPage: React.FC<LoginPageProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-gray-400 backdrop-blur-sm focus:bg-black/60 focus:border-blue-400 focus:outline-none transition-all duration-300 pr-12"
                   placeholder="Enter your password"
+                  className="w-full px-4 py-3 bg-black/40 border border-white/20 rounded-lg text-white placeholder-gray-400 backdrop-blur-sm focus:bg-black/60 focus:border-blue-400 focus:outline-none transition-all duration-300 pr-12"
                 />
                 <button
                   type="button"
@@ -100,7 +111,9 @@ const LoginPage: React.FC<LoginPageProps> = ({
             <div className="text-right">
               <button
                 type="button"
-                onClick={onForgotPasswordClick}
+                onClick={() =>
+                  alert("Forgot password flow not implemented yet")
+                }
                 className="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-300"
               >
                 Forgot password?
@@ -128,7 +141,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
             <p className="text-gray-400 text-sm">
               Don't have an account?{" "}
               <button
-                onClick={onSignUpClick}
+                onClick={() => navigate("/signup")}
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-300"
               >
                 Sign up

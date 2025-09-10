@@ -1,32 +1,42 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignupPage from "./component/Signup";
-import LoginPage from "./component/Login";
+import { Routes, Route } from "react-router-dom";
+import SignupPage from "./pages/Signup";
+import LoginPage from "./pages/Login";
 import Layout from "./component/Layout";
-import Home from "./component/Home";
-import SkillMonitoringPage from "./component/SkillMoniter";
-import RoadmapPage from "./component/Roadmap";
-import AssessmentPage from "./component/Assessment";
-import ResumeAnalyzer from "./component/Resume";
-import NEXTskillLanding from "./component/About";
-
+import Home from "./pages/Home";
+import SkillMonitoringPage from "./pages/SkillMoniter";
+import RoadmapPage from "./pages/Roadmap";
+import AssessmentPage from "./pages/Assessment";
+import ResumeAnalyzer from "./pages/Resume";
+import NEXTskillLanding from "./pages/About";
+import ProtectedRoute from "../src/component/ProtectedRoute";
 const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/skill" element={<SkillMonitoringPage />} />
-          <Route path="/roadmap" element={<RoadmapPage />} />
-          <Route path="/assessment" element={<AssessmentPage />} />
-          <Route path="/resume" element={<ResumeAnalyzer />} />
-          {/* <Route path="/testing" element={<Testing />} /> */}
-        </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/about" element={<NEXTskillLanding />} />
-      </Routes>
-    </Router>
+    <Routes>
+      {/* Home should always render Layout, but Layout itself decides which Navbar to show */}
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+      </Route>
+
+      {/* Protected routes (only logged-in users) */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/skill" element={<SkillMonitoringPage />} />
+        <Route path="/roadmap" element={<RoadmapPage />} />
+        <Route path="/assessment" element={<AssessmentPage />} />
+        <Route path="/resume" element={<ResumeAnalyzer />} />
+      </Route>
+
+      {/* Public routes */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/about" element={<NEXTskillLanding />} />
+    </Routes>
   );
 };
+
 export default App;

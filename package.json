@@ -19,6 +19,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.9.1",
     "clsx": "^2.1.1",
+    "firebase": "^12.2.1",
     "lucide-react": "^0.542.0",
     "motion": "^12.23.12",
     "react": "^19.1.1",

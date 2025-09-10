@@ -126,7 +126,7 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <nav className="w-full px-4 sm:px-6 lg:px-4  shadow-lg z-40 fixed">
+    <nav className="w-full px-4 sm:px-6 lg:px-4  shadow-lg z-40 fixed ">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Left Side - Toggle Buttons with Sliding Background */}
         <div className="relative flex bg-black/40 rounded-lg backdrop-blur-sm border border-white/20">

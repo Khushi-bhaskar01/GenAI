@@ -16,9 +16,9 @@ import {
   Clock,
   Award,
 } from "lucide-react";
-import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
-import Navbar from "./NavbarLogin";
-import NavbarLogin from "./Navbar";
+import { ShootingStarsAndStarsBackgroundDemo } from "../component/starbackground";
+import Navbar from "../component/NavbarLogin";
+import NavbarLogin from "../component/Navbar";
 
 const NEXTskillLanding: React.FC = () => {
   const [expandedFaq, setExpandedFaq] = useState<string | null>(null);

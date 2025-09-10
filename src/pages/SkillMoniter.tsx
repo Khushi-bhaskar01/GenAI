@@ -35,7 +35,7 @@ const SkillMonitoringPage: React.FC = () => {
     { id: '2', name: 'TypeScript', progress: 60 },
     { id: '3', name: 'Python', progress: 45 },
   ]);
-  
+
   const [newSkill, setNewSkill] = useState('');
   const [animatedProgress, setAnimatedProgress] = useState<{ [key: string]: number }>({});
 
@@ -122,7 +122,7 @@ const SkillMonitoringPage: React.FC = () => {
               <Plus className="w-6 h-6" />
               Add Your Skills
             </h2>
-            
+
             <div className="flex gap-3 mb-6">
               <input
                 type="text"
@@ -168,13 +168,13 @@ const SkillMonitoringPage: React.FC = () => {
               <Target className="w-6 h-6" />
               Quick Actions
             </h2>
-            
+
             <div className="space-y-4">
               <button onClick={()=>{navigate("/assessment")}} className="w-full py-4 px-6 bg-transparent border-2 border-blue-500 text-white rounded-xl hover:bg-blue-500/10 transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-3">
                 <FileText className="w-6 h-6" />
                 Take Assessment
               </button>
-              
+
               <button onClick={()=>{navigate("/resume")}} className="w-full py-4 px-6 bg-black/30 border border-gray-600 text-white rounded-xl hover:border-blue-500 hover:bg-blue-500/5 transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-3">
                 <TrendingUp className="w-6 h-6" />
                 Resume Analyzer
@@ -190,7 +190,7 @@ const SkillMonitoringPage: React.FC = () => {
             {/* Skills Overview */}
             <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
               <h3 className="text-xl font-bold text-white mb-6">Skill Overview & Analysis</h3>
-              
+
               <div className="space-y-4 mb-8">
                 {skills.map((skill) => (
                   <div key={skill.id} className="space-y-2">
@@ -215,9 +215,9 @@ const SkillMonitoringPage: React.FC = () => {
                   <RadarChart data={radarData}>
                     <PolarGrid stroke="#374151" />
                     <PolarAngleAxis dataKey="subject" tick={{ fill: '#ffffff', fontSize: 12 }} />
-                    <PolarRadiusAxis 
-                      angle={90} 
-                      domain={[0, 100]} 
+                    <PolarRadiusAxis
+                      angle={90}
+                      domain={[0, 100]}
                       tick={{ fill: '#9CA3AF', fontSize: 10 }}
                     />
                     <Radar
@@ -237,7 +237,7 @@ const SkillMonitoringPage: React.FC = () => {
             {/* What to Improve Section */}
             <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
               <h3 className="text-xl font-bold text-white mb-6">What to Improve</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {improvements.map((item) => (
                   <div key={item.id} className="bg-black/30 rounded-lg p-4 border border-gray-700/50">
@@ -257,14 +257,14 @@ const SkillMonitoringPage: React.FC = () => {
           {/* Progress Tracking Section */}
           <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
             <h3 className="text-xl font-bold text-white mb-6">Progress Tracking</h3>
-            
+
             <div className="relative">
               {milestones.map((milestone, index) => (
                 <div key={milestone.id} className="flex items-start gap-4 relative">
                   <div className="flex flex-col items-center relative z-10">
                     <div className={`w-4 h-4 rounded-full border-2 ${
-                      milestone.completed 
-                        ? 'bg-blue-500 border-blue-500' 
+                      milestone.completed
+                        ? 'bg-blue-500 border-blue-500'
                         : 'border-gray-600 bg-transparent'
                     }`} />
                   </div>
@@ -276,7 +276,7 @@ const SkillMonitoringPage: React.FC = () => {
                   </div>
                   {/* Connecting line */}
                   {index < milestones.length - 1 && (
-                    <div 
+                    <div
                       className={`absolute left-2 top-4 w-0.5 h-full ${
                         milestones[index + 1].completed ? 'bg-blue-500' : 'bg-gray-600'
                       }`}
@@ -289,7 +289,6 @@ const SkillMonitoringPage: React.FC = () => {
           </div>
         </div>
       </div>
-      
 
       <style jsx>{`
         @keyframes fade-in {
@@ -302,7 +301,7 @@ const SkillMonitoringPage: React.FC = () => {
             transform: translateY(0);
           }
         }
-        
+
         .animate-fade-in {
           animation: fade-in 0.5s ease-out forwards;
         }

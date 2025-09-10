@@ -33,7 +33,7 @@ const RoadmapPage: React.FC = () => {
     {
       title: "Skill Development",
       description: "Build practical skills through hands-on projects",
-      timeAllocation: "6-8 weeks", 
+      timeAllocation: "6-8 weeks",
       status: "current",
       tasks: ["Complete 3 projects", "Join online communities", "Get peer feedback"],
       color: "from-blue-500 to-cyan-500"
@@ -171,7 +171,7 @@ const RoadmapPage: React.FC = () => {
     }
   };
 
-  const nextStep = roadmapData.find(step => step.status === 'current') || 
+  const nextStep = roadmapData.find(step => step.status === 'current') ||
                   roadmapData.find(step => step.status === 'upcoming');
 
   return (
@@ -201,8 +201,8 @@ const RoadmapPage: React.FC = () => {
                   <div
                     key={index}
                     className={`relative transition-all duration-500 ease-out transform ${
-                      index < visibleSteps 
-                        ? 'opacity-100 translate-x-0' 
+                      index < visibleSteps
+                        ? 'opacity-100 translate-x-0'
                         : 'opacity-0 translate-x-8'
                     }`}
                     style={{ transitionDelay: `${index * 100}ms` }}
@@ -210,7 +210,7 @@ const RoadmapPage: React.FC = () => {
                     {/* Step Number Circle */}
                     <div className="absolute left-0 flex items-center justify-center">
                       <div className={`w-16 h-16 rounded-full flex items-center justify-center border-2 ${
-                        step.status === 'completed' ? 'bg-white border-white' : 
+                        step.status === 'completed' ? 'bg-white border-white' :
                         step.status === 'current' ? 'bg-blue-400 border-blue-400' : 'bg-gray-800 border-gray-600'
                       }`}>
                         <span className={`font-bold text-lg ${
@@ -228,9 +228,9 @@ const RoadmapPage: React.FC = () => {
                           <span className="text-sm text-gray-300">{getStatusText(step.status)}</span>
                         </div>
                       </div>
-                      
+
                       <p className="text-gray-300 mb-4">{step.description}</p>
-                      
+
                       <div className="flex items-center gap-3 mb-4">
                         <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full border border-gray-600 bg-gray-800/50">
                           <Clock className="w-3 h-3 text-gray-300" />
@@ -262,7 +262,7 @@ const RoadmapPage: React.FC = () => {
             <div className="sticky top-6">
               <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50 mb-8">
                 <h3 className="text-xl font-bold text-white mb-6">Recommended Resources</h3>
-                
+
                 <div className="space-y-4">
                   {resources.map((resource) => (
                     <div
@@ -275,15 +275,15 @@ const RoadmapPage: React.FC = () => {
                         </h4>
                         {getTypeIcon(resource.type)}
                       </div>
-                      
+
                       <p className="text-gray-400 text-xs mb-3">{resource.platform}</p>
-                      
+
                       <div className="flex items-center justify-between mb-3">
                         <span className={`text-xs px-2 py-1 rounded-full border bg-blue-400 ${getDifficultyColor(resource.difficulty)}`}>
                           {resource.difficulty}
                         </span>
                       </div>
-                      
+
                       <button className="w-full px-3 py-2 text-xs bg-blue-500 text-gray-300 rounded-md hover:bg-blue-800 transition-colors">
                         Save to Roadmap
                       </button>
@@ -304,11 +304,11 @@ const RoadmapPage: React.FC = () => {
                   <h3 className="text-2xl font-bold text-white mb-2">Ready for Your Next Challenge?</h3>
                   <p className="text-gray-300">Continue your learning journey with the next step</p>
                 </div>
-                
+
                 <div className="bg-black/40 rounded-xl p-6 mb-6">
                   <h4 className="text-xl font-semibold text-white mb-2">{nextStep.title}</h4>
                   <p className="text-gray-300 mb-4">{nextStep.description}</p>
-                  
+
                   <div className="flex flex-wrap gap-3 mb-4">
                     <span className="flex items-center gap-1 text-sm px-3 py-1 rounded-full border border-gray-600 bg-gray-800/50">
                       <Clock className="w-4 h-4 text-gray-300" />
@@ -328,7 +328,7 @@ const RoadmapPage: React.FC = () => {
                     </ul>
                   </div>
                 </div>
-                
+
                 <div className="text-center">
                   <button className="px-8 py-4 bg-blue-400 hover:bg-blue-500 text-black rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105">
                     Start This Step
@@ -344,3 +344,4 @@ const RoadmapPage: React.FC = () => {
 };
 
 export default RoadmapPage;
+

@@ -2,19 +2,18 @@ import React from "react";
 import "./../../src/index.css";
 import {GoArrowUpRight} from 'react-icons/go'
 import { useNavigate } from "react-router-dom";
-import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
+import { ShootingStarsAndStarsBackgroundDemo } from "../component/starbackground";
 import { motion } from "framer-motion";
-import { GlowingEffectDemo } from "./glowing-effect";
-import { GlowingEffect } from "./ui/glowing-effect";
-import { TextHoverEffect } from "./ui/text-hover-effect";
-import { AnimatedTooltipPreview } from "./Connect-team";
-import { WavyBackground } from "./ui/wavy-background";
+import { GlowingEffect } from "../component/ui/glowing-effect";
+import { TextHoverEffect } from "../component/ui/text-hover-effect";
+import { AnimatedTooltipPreview } from "../component/Connect-team";
+import { WavyBackground } from "../component/ui/wavy-background";
 import {
   TextRevealCard,
   TextRevealCardDescription,
   TextRevealCardTitle,
-} from "./ui/text-reveal-card";
-import { HoverBorderGradient } from "./ui/hover-border-gradient";
+} from "../component/ui/text-reveal-card";
+import { HoverBorderGradient } from "../component/ui/hover-border-gradient";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -101,8 +100,8 @@ const Home: React.FC = () => {
       >
         <div className="flex flex-col justify-center items-center relative z-10 mt-30">
           <div className="bg-transparent shadow-[0_0_80px_40px_rgba(0,0,0,1)]">
-            <div className="pt-15 rounded-2xl px-20 bg-gradient-to-b from-black from to-70% via-black/80 via-80% to-black/30 to-100%">
-              <div className="px-10 rounded-2xl bg-gradient-to-b from-white/10 from to-70% via-black/80 via-80% to-black/30 to-100%">
+            <div className="pt-15 rounded-2xl px-20 bg-gradient-to-b from-black from via-black/80 via-80% to-black/30 to-100%">
+              <div className="px-10 rounded-2xl bg-gradient-to-b from-white/10 from via-black/80 via-80% to-black/30 to-100%">
                 <div
                   className="w-[110vh] h-[100vh] bg-gradient-to-b from-black from-70% via-black/80 via-80% to-slate-900/20 to-100% bg-contain bg-center bg-no-repeat"
                   style={{

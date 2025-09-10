@@ -1,17 +1,18 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-import Navbar from "./NavbarLogin";
-import NavbarLogin from "./Navbar";
+import Navbar from "./Navbar"; // logged-in navbar
+import NavbarLogin from "./NavbarLogin"; // guest navbar
 import Dashboard from "./Dahsboard";
 import Footer from "./Footer";
 import { ShootingStarsAndStarsBackgroundDemo } from "./starbackground";
+import { useAuth } from "../context/authContext"; // ✅ use auth context
 
 const Layout = () => {
-  const loggedin = true;
+  const { user, loading } = useAuth(); // get Firebase auth state
   const [showVideo, setShowVideo] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  // For intro video at just starting of the page
+  // Intro video
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowVideo(false);
@@ -19,6 +20,14 @@ const Layout = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-screen">
@@ -35,18 +44,21 @@ const Layout = () => {
         <>
           <ShootingStarsAndStarsBackgroundDemo />
           <div className="relative w-full min-h-screen">
-            {loggedin ? (
-              <NavbarLogin onProfileClick={() => setIsProfileOpen(true)} />
+            {user ? ( // ✅ logged-in user
+              <Navbar onProfileClick={() => setIsProfileOpen(true)} />
             ) : (
-              <Navbar />
+              <NavbarLogin /> // ✅ guest view
             )}
+
             <Dashboard
               isOpen={isProfileOpen}
               onClose={() => setIsProfileOpen(false)}
             />
-            <main className="">
+
+            <main>
               <Outlet />
             </main>
+
             <Footer />
           </div>
         </>
