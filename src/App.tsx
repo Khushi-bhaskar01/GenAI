@@ -7,7 +7,7 @@ import SkillMonitoringPage from "./pages/SkillMoniter";
 import RoadmapPage from "./pages/Roadmap";
 import AssessmentPage from "./pages/Assessment";
 import ResumeAnalyzer from "./pages/Resume";
-import NEXTskillLanding from "./pages/About";
+import About from "./pages/About";
 import ProtectedRoute from "../src/component/ProtectedRoute";
 const App: React.FC = () => {
   return (
@@ -15,6 +15,10 @@ const App: React.FC = () => {
       {/* Home should always render Layout, but Layout itself decides which Navbar to show */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+      </Route>
+
+      <Route path="/about" element={<Layout />}>
+        <Route index element={<About />} />
       </Route>
 
       {/* Protected routes (only logged-in users) */}
@@ -34,7 +38,7 @@ const App: React.FC = () => {
       {/* Public routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/about" element={<NEXTskillLanding />} />
+      <Route path="/about" element={<About />} />
     </Routes>
   );
 };

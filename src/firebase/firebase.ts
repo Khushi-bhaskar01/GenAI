@@ -1,27 +1,25 @@
-// Import the functions you need from the SDKs you need
+// firebase.ts
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyC6ZRwu1ONB_zsGYP11Z7SeacbRoJ1zbjs",
-  authDomain: "pacific-vault-470814-s5.firebaseapp.com",
-  projectId: "pacific-vault-470814-s5",
-  storageBucket: "pacific-vault-470814-s5.firebasestorage.app",
-  messagingSenderId: "906897078440",
-  appId: "1:906897078440:web:dfb9b23ca6c4a2097bea9d",
-  measurementId: "G-PDG9K4D34C",
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
- export const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+export const app = initializeApp(firebaseConfig);
 
-// exporting funtions for backend
+let analytics: ReturnType<typeof getAnalytics> | null = null;
+if (typeof window !== "undefined") {
+  analytics = getAnalytics(app);
+}
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);

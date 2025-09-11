@@ -15,6 +15,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import { getAuth, signOut } from "firebase/auth";
+import { app } from "../firebase/firebase";
 
 interface ProfilePanelProps {
   isOpen: boolean;
@@ -53,19 +55,83 @@ const Dashboard: React.FC<ProfilePanelProps> = ({
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", onClick: () => { navigate("/"); onClose(); onDashboard?.(); } },
-    { icon: Monitor, label: "Skill Monitor", onClick: () => { navigate("/skill"); onClose(); onSkillMonitor?.(); } },
-    { icon: BookOpen, label: "Course Library", onClick: () => { navigate("/"); onClose(); onCourseLibrary?.(); } },
-    { icon: Map, label: "Roadmap", onClick: () => { navigate("/roadmap"); onClose(); onRoadmap?.(); } },
-    { icon: FileText, label: "Assessments", onClick: () => { navigate("/assessment"); onClose(); onAssessments?.(); } },
-    { icon: File, label: "Resume", onClick: () => { navigate("/resume"); onClose(); onResume?.(); } },
-    { icon: Settings, label: "Settings", onClick: () => { navigate("/settings"); onClose(); onSettings?.(); } },
+    {
+      icon: LayoutDashboard,
+      label: "Dashboard",
+      onClick: () => {
+        navigate("/");
+        onClose();
+        onDashboard?.();
+      },
+    },
+    {
+      icon: Monitor,
+      label: "Skill Monitor",
+      onClick: () => {
+        navigate("/skill");
+        onClose();
+        onSkillMonitor?.();
+      },
+    },
+    {
+      icon: BookOpen,
+      label: "Course Library",
+      onClick: () => {
+        navigate("/");
+        onClose();
+        onCourseLibrary?.();
+      },
+    },
+    {
+      icon: Map,
+      label: "Roadmap",
+      onClick: () => {
+        navigate("/roadmap");
+        onClose();
+        onRoadmap?.();
+      },
+    },
+    {
+      icon: FileText,
+      label: "Assessments",
+      onClick: () => {
+        navigate("/assessment");
+        onClose();
+        onAssessments?.();
+      },
+    },
+    {
+      icon: File,
+      label: "Resume",
+      onClick: () => {
+        navigate("/resume");
+        onClose();
+        onResume?.();
+      },
+    },
+    {
+      icon: Settings,
+      label: "Settings",
+      onClick: () => {
+        navigate("/settings");
+        onClose();
+        onSettings?.();
+      },
+    },
   ];
 
-  const handleLogout = () => {
-    onLogout?.();
-    navigate("/login");
-    onClose();
+  const handleLogout = async () => {
+    try {
+      const auth = getAuth(app);
+      await signOut(auth); // 👈 properly signs out from Firebase
+      console.log("User signed out successfully");
+
+      onLogout?.(); // if you want to trigger extra parent logic
+      navigate("/"); // go back to home
+      onClose(); // close the dashboard panel
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
   };
 
   return (
@@ -126,7 +192,10 @@ const Dashboard: React.FC<ProfilePanelProps> = ({
                 </div>
 
                 <button
-                  onClick={() => { onEditProfile?.(); onClose(); }}
+                  onClick={() => {
+                    onEditProfile?.();
+                    onClose();
+                  }}
                   className="w-full flex items-center justify-center space-x-2 py-2.5 bg-black/40 border border-white/20 rounded-lg text-gray-300 hover:bg-black/60 hover:text-white hover:border-white/30 transition-all duration-300"
                 >
                   <Edit size={16} />

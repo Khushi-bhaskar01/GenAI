@@ -9,7 +9,7 @@ import { useAuth } from "../context/authContext"; // ✅ use auth context
 
 const Layout = () => {
   const { user, loading } = useAuth(); // get Firebase auth state
-  const [showVideo, setShowVideo] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Intro video

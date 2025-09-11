@@ -20,7 +20,6 @@ const LoginPage: React.FC = () => {
     try {
       const auth = getAuth(app);
       await signInWithEmailAndPassword(auth, email, password);
-      alert("Login Successful!");
       navigate("/"); // redirect after login
     } catch (error: any) {
       if (error.code === "auth/user-not-found") {

@@ -69,7 +69,6 @@ const SignupPage: React.FC = () => {
       );
 
       console.log("Firestore user doc written with id:", uid);
-      alert("Signup successful!");
       navigate("/"); // redirect to home or dashboard
     } catch (error: any) {
       console.error("Signup error:", error);

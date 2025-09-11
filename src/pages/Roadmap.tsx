@@ -1,254 +1,338 @@
-import React, { useState, useEffect } from 'react';
-import { Clock, BookOpen, Play, CheckCircle, Circle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  Clock,
+  BookOpen,
+  Play,
+  CheckCircle,
+  Circle,
+  AlertCircle,
+  ExternalLink,
+  Target,
+} from "lucide-react";
+import { useAuth } from "../context/authContext";
+import { db } from "../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
-interface RoadmapStep {
-  title: string;
-  description: string;
+interface Task {
+  taskName: string;
+  status: "completed" | "current" | "upcoming";
   timeAllocation: string;
-  status: 'completed' | 'current' | 'upcoming';
-  tasks: string[];
-  color: string;
+  resources: string[];
 }
 
-interface Resource {
-  id: string;
-  name: string;
-  platform: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  type: 'Course' | 'Tutorial' | 'Book' | 'Practice';
+interface RoadmapData {
+  title: string;
+  tasks: Task[];
 }
+
+// Mock Firebase data (used only as fallback)
+const mockRoadmapData: RoadmapData = {
+  title: "Frontend Development",
+  tasks: [
+    {
+      taskName: "Learn HTML",
+      status: "completed",
+      timeAllocation: "2 weeks",
+      resources: ["W3Schools - HTML Tutorial", "MDN - HTML Basics", "freeCodeCamp - HTML Guide"],
+    },
+    {
+      taskName: "Learn CSS",
+      status: "current",
+      timeAllocation: "3 weeks",
+      resources: ["CSS Tricks", "MDN - CSS", "YouTube - Traversy Media CSS"],
+    },
+    {
+      taskName: "Learn JavaScript Fundamentals",
+      status: "upcoming",
+      timeAllocation: "4 weeks",
+      resources: ["MDN - JavaScript Guide", "JavaScript.info", "Eloquent JavaScript Book", "freeCodeCamp - JavaScript"],
+    },
+    {
+      taskName: "Learn React.js",
+      status: "upcoming",
+      timeAllocation: "5 weeks",
+      resources: ["Official React Documentation", "React Tutorial for Beginners", "The Complete React Course", "React Projects for Practice"],
+    },
+    {
+      taskName: "Build Portfolio Projects",
+      status: "upcoming",
+      timeAllocation: "6 weeks",
+      resources: ["Portfolio Project Ideas", "GitHub Pages Deployment", "Netlify Hosting Guide", "Portfolio Design Inspiration"],
+    },
+  ],
+};
 
 const RoadmapPage: React.FC = () => {
-  const [visibleSteps, setVisibleSteps] = useState<number>(0);
+  const { user, loading: authLoading } = useAuth();
+  const [roadmapData, setRoadmapData] = useState<RoadmapData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [visibleTasks, setVisibleTasks] = useState<number>(0);
+  const [expandedResources, setExpandedResources] = useState<number[]>([]);
 
-  const roadmapData: RoadmapStep[] = [
-    {
-      title: "Foundation",
-      description: "Master the fundamentals and core concepts",
-      timeAllocation: "2-4 weeks",
-      status: "completed",
-      tasks: ["Learn basic syntax", "Understand data structures", "Practice problem solving"],
-      color: "from-green-500 to-emerald-500"
-    },
-    {
-      title: "Skill Development",
-      description: "Build practical skills through hands-on projects",
-      timeAllocation: "6-8 weeks",
-      status: "current",
-      tasks: ["Complete 3 projects", "Join online communities", "Get peer feedback"],
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
-      title: "Advanced Topics",
-      description: "Dive deep into specialized areas of expertise",
-      timeAllocation: "4-6 weeks",
-      status: "upcoming",
-      tasks: ["Study advanced concepts", "Build complex applications", "Contribute to open source"],
-      color: "from-indigo-500 to-blue-500"
-    },
-    {
-      title: "Portfolio Creation",
-      description: "Showcase your work and create a professional presence",
-      timeAllocation: "2-3 weeks",
-      status: "upcoming",
-      tasks: ["Build portfolio website", "Document your projects", "Create compelling case studies"],
-      color: "from-sky-500 to-blue-500"
-    },
-    {
-      title: "Job Preparation",
-      description: "Prepare for interviews and job applications",
-      timeAllocation: "3-4 weeks",
-      status: "upcoming",
-      tasks: ["Practice technical interviews", "Update resume", "Apply to positions"],
-      color: "from-indigo-500 to-blue-500"
-    },
-    {
-      title: "Career Launch",
-      description: "Land your dream job and continue growing",
-      timeAllocation: "Ongoing",
-      status: "upcoming",
-      tasks: ["Start new position", "Set performance goals", "Plan continuous learning"],
-      color: "from-cyan-500 to-blue-400"
-    }
-  ];
-
-  const resources: Resource[] = [
-    {
-      id: '1',
-      name: 'Complete Web Development Course',
-      platform: 'Udemy',
-      difficulty: 'Beginner',
-      type: 'Course'
-    },
-    {
-      id: '2',
-      name: 'Advanced JavaScript Patterns',
-      platform: 'Frontend Masters',
-      difficulty: 'Advanced',
-      type: 'Course'
-    },
-    {
-      id: '3',
-      name: 'React Documentation',
-      platform: 'Official Docs',
-      difficulty: 'Intermediate',
-      type: 'Tutorial'
-    },
-    {
-      id: '4',
-      name: 'Clean Code Handbook',
-      platform: 'Book Store',
-      difficulty: 'Intermediate',
-      type: 'Book'
-    }
-  ];
-
+  // Fetch roadmap dynamically from Firestore
   useEffect(() => {
-    const timer = setInterval(() => {
-      setVisibleSteps(prev => {
-        if (prev < roadmapData.length) {
-          return prev + 1;
+    const fetchRoadmap = async () => {
+      if (!user) return;
+
+      try {
+        const docRef = doc(db, "user", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setRoadmapData(userData.roadmap || mockRoadmapData);
+        } else {
+          setRoadmapData(mockRoadmapData);
         }
+      } catch (err) {
+        console.error("Error fetching roadmap:", err);
+        setRoadmapData(mockRoadmapData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!authLoading) fetchRoadmap();
+  }, [user, authLoading]);
+
+  // Animate task appearance
+  useEffect(() => {
+    if (!roadmapData) return;
+
+    const timer = setInterval(() => {
+      setVisibleTasks((prev) => {
+        if (prev < roadmapData.tasks.length) return prev + 1;
         clearInterval(timer);
         return prev;
       });
     }, 200);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [roadmapData]);
 
+  // Status helpers
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <CheckCircle className="w-5 h-5 text-white" />;
-      case 'current':
-        return <AlertCircle className="w-5 h-5 text-white" />;
-      case 'upcoming':
-        return <Circle className="w-5 h-5 text-gray-400" />;
+      case "current":
+        return <AlertCircle className="w-5 h-5 text-blue-300" />;
+      case "upcoming":
+        return <Circle className="w-5 h-5 text-gray-300" />;
       default:
-        return <Circle className="w-5 h-5 text-gray-400" />;
+        return <Circle className="w-5 h-5 text-gray-300" />;
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'Completed';
-      case 'current':
-        return 'In Progress';
-      case 'upcoming':
-        return 'Upcoming';
+      case "completed":
+        return "Completed";
+      case "current":
+        return "In Progress";
+      case "upcoming":
+        return "Upcoming";
       default:
-        return 'Upcoming';
+        return "Upcoming";
     }
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Beginner':
-        return 'text-gray-300 bg-gray-800 border-gray-600';
-      case 'Intermediate':
-        return 'text-gray-300 bg-gray-800 border-gray-600';
-      case 'Advanced':
-        return 'text-gray-300 bg-gray-800 border-gray-600';
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-white/20 text-white border-white/30";
+      case "current":
+        return "bg-blue-400/20 text-blue-300 border-blue-400/40";
+      case "upcoming":
+        return "bg-gray-500/20 text-gray-300 border-gray-400/30";
       default:
-        return 'text-gray-300 bg-gray-800 border-gray-600';
+        return "bg-gray-500/20 text-gray-300 border-gray-400/30";
     }
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'Course':
-        return <Play className="w-4 h-4" />;
-      case 'Tutorial':
-        return <BookOpen className="w-4 h-4" />;
-      case 'Book':
-        return <BookOpen className="w-4 h-4" />;
-      case 'Practice':
-        return <BookOpen className="w-4 h-4" />;
-      default:
-        return <BookOpen className="w-4 h-4" />;
-    }
+  const toggleResourceExpansion = (taskIndex: number) => {
+    setExpandedResources((prev) =>
+      prev.includes(taskIndex)
+        ? prev.filter((index) => index !== taskIndex)
+        : [...prev, taskIndex]
+    );
   };
 
-  const nextStep = roadmapData.find(step => step.status === 'current') ||
-                  roadmapData.find(step => step.status === 'upcoming');
+  // Loading / fallback UI
+  if (authLoading || loading) {
+    return <div className="text-white p-6">Loading your roadmap...</div>;
+  }
+
+  if (!roadmapData) {
+    return <div className="text-white p-6">No roadmap found for this user.</div>;
+  }
+
+  const nextTask =
+    roadmapData.tasks.find((task) => task.status === "current") ||
+    roadmapData.tasks.find((task) => task.status === "upcoming");
+
+  const completedTasks = roadmapData.tasks.filter(
+    (task) => task.status === "completed"
+  ).length;
+  const totalTasks = roadmapData.tasks.length;
+  const progressPercentage =
+    totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
   return (
-    <div className="min-h-screen p-6 pt-20">
+   <div className="min-h-screen p-6 pt-20">
       <div className="max-w-6xl mx-auto">
-        {/* Page Header */}
+        Page Header
         <div className="text-center mb-16">
           <div className="relative inline-block">
             <h1 className="text-5xl font-bold text-white mb-4">
-              Your Learning Roadmap
+              {roadmapData.title} 
+              Roadmap
             </h1>
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-blue-400 rounded-full"></div>
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
           </div>
-          <p className="text-gray-300 text-lg italic mt-6">
-            A personalized journey to close your skill gap.
+          <p className="text-gray-200 text-lg italic mt-6">
+            A personalized journey to master frontend development skills.
           </p>
+
+          {/* Progress Overview */}
+          <div className="mt-8 bg-white/5 backdrop-blur-sm border border-white/20 rounded-2xl p-6 max-w-md mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-gray-200">Overall Progress</span>
+              <span className="text-blue-300 font-bold">
+                {completedTasks}/{totalTasks}
+              </span>
+            </div>
+            <div className="w-full bg-white/10 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-blue-400 to-blue-600 h-3 rounded-full transition-all duration-1000 shadow-lg shadow-blue-400/30"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+            <p className="text-sm text-gray-300 mt-2">
+              {Math.round(progressPercentage)}% Complete
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Roadmap Timeline */}
           <div className="lg:col-span-3">
             <div className="relative">
-              <div className="absolute left-8 top-8 w-0.5 bg-gray-700" style={{ height: `${(roadmapData.length - 1) * 200}px` }}></div>
+              <div
+                className="absolute left-8 top-8 w-0.5 bg-gradient-to-b from-blue-400/50 to-white/20"
+                style={{ height: `${(roadmapData.tasks.length - 1) * 250}px` }}
+              ></div>
 
               <div className="space-y-8">
-                {roadmapData.map((step, index) => (
+                {roadmapData.tasks.map((task, index) => (
                   <div
                     key={index}
                     className={`relative transition-all duration-500 ease-out transform ${
-                      index < visibleSteps
-                        ? 'opacity-100 translate-x-0'
-                        : 'opacity-0 translate-x-8'
+                      index < visibleTasks
+                        ? "opacity-100 translate-x-0"
+                        : "opacity-0 translate-x-8"
                     }`}
                     style={{ transitionDelay: `${index * 100}ms` }}
                   >
-                    {/* Step Number Circle */}
+                    {/* Task Number Circle */}
                     <div className="absolute left-0 flex items-center justify-center">
-                      <div className={`w-16 h-16 rounded-full flex items-center justify-center border-2 ${
-                        step.status === 'completed' ? 'bg-white border-white' :
-                        step.status === 'current' ? 'bg-blue-400 border-blue-400' : 'bg-gray-800 border-gray-600'
-                      }`}>
-                        <span className={`font-bold text-lg ${
-                          step.status === 'completed' ? 'text-black' : 'text-white'
-                        }`}>{index + 1}</span>
+                      <div
+                        className={`w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
+                          task.status === "completed"
+                            ? "bg-white border-white shadow-lg shadow-white/30"
+                            : task.status === "current"
+                            ? "bg-blue-500 border-blue-400 shadow-lg shadow-blue-400/40"
+                            : "bg-white/10 border-white/30"
+                        }`}
+                      >
+                        <span
+                          className={`font-bold text-lg transition-colors ${
+                            task.status === "completed"
+                              ? "text-gray-800"
+                              : task.status === "current"
+                              ? "text-white"
+                              : "text-white"
+                          }`}
+                        >
+                          {index + 1}
+                        </span>
                       </div>
                     </div>
 
-                    {/* Step Card */}
-                    <div className="ml-24 bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50 hover:border-gray-700 transition-all duration-300">
+                    {/* Task Card */}
+                    <div className="ml-24 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/20 hover:border-blue-300/50 hover:bg-white/10 transition-all duration-300">
                       <div className="flex items-start justify-between mb-4">
-                        <h3 className="text-xl font-bold text-white">{step.title}</h3>
+                        <h3 className="text-xl font-bold text-white">
+                          {task.taskName}
+                        </h3>
                         <div className="flex items-center gap-2">
-                          {getStatusIcon(step.status)}
-                          <span className="text-sm text-gray-300">{getStatusText(step.status)}</span>
+                          {getStatusIcon(task.status)}
+                          <span
+                            className={`text-xs px-3 py-1 rounded-full border ${getStatusBadgeColor(
+                              task.status
+                            )}`}
+                          >
+                            {getStatusText(task.status)}
+                          </span>
                         </div>
                       </div>
 
-                      <p className="text-gray-300 mb-4">{step.description}</p>
-
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full border border-gray-600 bg-gray-800/50">
-                          <Clock className="w-3 h-3 text-gray-300" />
-                          <span className="text-gray-300">{step.timeAllocation}</span>
+                      <div className="flex items-center gap-3 mb-6">
+                        <span className="flex items-center gap-1 text-xs px-3 py-1 rounded-full border border-white/30 bg-white/10">
+                          <Clock className="w-3 h-3 text-gray-200" />
+                          <span className="text-gray-200">
+                            {task.timeAllocation}
+                          </span>
                         </span>
+                        {task.status === "current" && (
+                          <span className="flex items-center gap-2 text-xs px-3 py-1 rounded-full bg-blue-400/20 text-blue-300 border border-blue-400/40">
+                            <Play className="w-3 h-3" />
+                            <span>Active</span>
+                          </span>
+                        )}
                       </div>
 
-                      {/* Tasks */}
-                      <div className="space-y-2">
-                        <h4 className="text-sm font-semibold text-gray-300">Tasks:</h4>
-                        <ul className="space-y-1">
-                          {step.tasks.map((task, taskIndex) => (
-                            <li key={taskIndex} className="text-sm text-gray-400 flex items-center gap-2">
-                              <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-                              {task}
-                            </li>
+                      {/* Resources Section */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-semibold text-gray-200 flex items-center gap-2">
+                            <BookOpen className="w-4 h-4" />
+                            Learning Resources ({task.resources?.length})
+                          </h4>
+                          <button
+                            onClick={() => toggleResourceExpansion(index)}
+                            className="text-blue-300 hover:text-blue-200 text-sm transition-colors"
+                          >
+                            {expandedResources.includes(index)
+                              ? "Show Less"
+                              : "Show All"}
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {(expandedResources.includes(index)
+                            ? task.resources || []
+                            : (task.resources || []).slice(0, 2)
+                          ).map((resource, resourceIndex) => (
+                            <div
+                              key={resourceIndex}
+                              className="flex items-center gap-2 text-sm text-gray-200 bg-white/10 rounded-lg p-3 hover:bg-white/20 transition-colors cursor-pointer group border border-white/20"
+                            >
+                              <ExternalLink className="w-3 h-3 text-blue-300 group-hover:text-blue-200" />
+                              <span className="flex-1">
+                                {resource}
+                              </span>
+                            </div>
                           ))}
-                        </ul>
+                        </div>
+
+                        {!expandedResources.includes(index) &&
+                          (task.resources?.length ?? 0) > 2 && (
+                            <p className="text-xs text-gray-400 text-center">
+                              +{task.resources.length - 2} more resources
+                              available
+                            </p>
+                          )}
                       </div>
                     </div>
                   </div>
@@ -257,81 +341,138 @@ const RoadmapPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Resource Recommendations Sidebar */}
+          {/* Sidebar with Stats and Current Task */}
           <div className="lg:col-span-1">
-            <div className="sticky top-6">
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50 mb-8">
-                <h3 className="text-xl font-bold text-white mb-6">Recommended Resources</h3>
-
+            <div className="sticky top-6 space-y-6">
+              {/* Progress Stats */}
+              <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <h3 className="text-xl font-bold text-white mb-6">
+                  Progress Overview
+                </h3>
                 <div className="space-y-4">
-                  {resources.map((resource) => (
-                    <div
-                      key={resource.id}
-                      className="bg-black/30 rounded-lg p-4 border border-gray-700/50 hover:border-gray-600 transition-all duration-300 group cursor-pointer"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-medium text-white text-sm group-hover:text-gray-300 transition-colors">
-                          {resource.name}
-                        </h4>
-                        {getTypeIcon(resource.type)}
-                      </div>
-
-                      <p className="text-gray-400 text-xs mb-3">{resource.platform}</p>
-
-                      <div className="flex items-center justify-between mb-3">
-                        <span className={`text-xs px-2 py-1 rounded-full border bg-blue-400 ${getDifficultyColor(resource.difficulty)}`}>
-                          {resource.difficulty}
-                        </span>
-                      </div>
-
-                      <button className="w-full px-3 py-2 text-xs bg-blue-500 text-gray-300 rounded-md hover:bg-blue-800 transition-colors">
-                        Save to Roadmap
-                      </button>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-200 text-sm">Completed</span>
+                    <span className="text-white font-bold">
+                      {/* {completedTasks} */}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-200 text-sm">In Progress</span>
+                    <span className="text-blue-300 font-bold">
+                      {
+                        roadmapData.tasks.filter((t) => t.status === "current")
+                          .length
+                      }
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-200 text-sm">Remaining</span>
+                    <span className="text-gray-300 font-bold">
+                      {
+                        roadmapData.tasks.filter((t) => t.status === "upcoming")
+                          .length
+                      }
+                    </span>
+                  </div>
+                  <div className="pt-3 border-t border-white/20">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-100 font-medium">
+                        Total Progress
+                      </span>
+                      <span className="text-blue-300 font-bold">
+                        {Math.round(progressPercentage)}%
+                      </span>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
+
+              {/* Current Task Spotlight */}
+              {nextTask && (
+                <div className="bg-blue-500/10 backdrop-blur-sm rounded-2xl p-6 border border-blue-400/30">
+                  <h3 className="text-lg font-bold text-white mb-4">
+                    Focus Area
+                  </h3>
+                  <div className="space-y-3">
+                    <h4 className="text-blue-300 font-semibold">
+                      {nextTask.taskName}
+                    </h4>
+                    <div className="flex items-center gap-2 text-sm text-gray-200">
+                      <Clock className="w-4 h-4" />
+                      <span>
+                        {nextTask.timeAllocation}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-300">
+                      {nextTask.resources.length} resources available to help
+                      you succeed
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Next Step Highlight */}
-        {nextStep && (
+        {nextTask && (
           <div className="mt-12">
-            <div className="bg-black/60 rounded-2xl p-8 backdrop-blur-sm border-2 border-blue-400 relative overflow-hidden">
+            <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-8 border-2 border-blue-400/40 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-2xl"></div>
+
               <div className="relative z-10">
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-white mb-2">Ready for Your Next Challenge?</h3>
-                  <p className="text-gray-300">Continue your learning journey with the next step</p>
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    Ready to Continue?
+                  </h3>
+                  <p className="text-gray-200">
+                    Take the next step in your learning journey
+                  </p>
                 </div>
 
-                <div className="bg-black/40 rounded-xl p-6 mb-6">
-                  <h4 className="text-xl font-semibold text-white mb-2">{nextStep.title}</h4>
-                  <p className="text-gray-300 mb-4">{nextStep.description}</p>
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6 border border-white/20">
+                  <h4 className="text-xl font-semibold text-white mb-4">
+                    {nextTask.taskName}
+                  </h4>
 
-                  <div className="flex flex-wrap gap-3 mb-4">
-                    <span className="flex items-center gap-1 text-sm px-3 py-1 rounded-full border border-gray-600 bg-gray-800/50">
-                      <Clock className="w-4 h-4 text-gray-300" />
-                      <span className="text-gray-300">{nextStep.timeAllocation}</span>
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    <span className="flex items-center gap-1 text-sm px-3 py-1 rounded-full border border-white/30 bg-white/10">
+                      <Clock className="w-4 h-4 text-gray-200" />
+                      <span className="text-gray-200">
+                        {nextTask.timeAllocation}
+                      </span>
+                    </span>
+                    <span className="flex items-center gap-1 text-sm px-3 py-1 rounded-full border border-blue-400/40 bg-blue-400/20 text-blue-300">
+                      <BookOpen className="w-4 h-4" />
+                      <span>
+                        {nextTask.resources.length} resources
+                        </span>
                     </span>
                   </div>
 
                   <div className="space-y-2">
-                    <h5 className="text-sm font-semibold text-gray-300">Tasks to complete:</h5>
-                    <ul className="space-y-1">
-                      {nextStep.tasks.map((task, index) => (
-                        <li key={index} className="text-sm text-gray-400 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-gray-500 rounded-full"></div>
-                          {task}
-                        </li>
+                    <h5 className="text-sm font-semibold text-gray-200">
+                      Available Resources:
+                    </h5>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {nextTask.resources.slice(0, 4).map((resource, index) => (
+                        <div
+                          key={index}
+                          className="text-sm text-gray-200 flex items-center gap-2 bg-white/10 rounded p-2 border border-white/20"
+                        >
+                          <div className="w-1 h-1 bg-blue-400 rounded-full"></div>
+                          <span className="truncate">
+                            {resource}
+                            </span>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </div>
 
                 <div className="text-center">
-                  <button className="px-8 py-4 bg-blue-400 hover:bg-blue-500 text-black rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105">
-                    Start This Step
+                  <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/30">
+                    Start Learning
                   </button>
                 </div>
               </div>
@@ -344,4 +485,3 @@ const RoadmapPage: React.FC = () => {
 };
 
 export default RoadmapPage;
-
