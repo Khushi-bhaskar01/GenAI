@@ -12,7 +12,7 @@ import ProtectedRoute from "../src/component/ProtectedRoute";
 const App: React.FC = () => {
   return (
     <Routes>
-      {/* Home should always render Layout, but Layout itself decides which Navbar to show */}
+      {/* Home render Layout, but Layout itself decides which Navbar to show */}
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
       </Route>
@@ -21,7 +21,7 @@ const App: React.FC = () => {
         <Route index element={<About />} />
       </Route>
 
-      {/* Protected routes (only logged-in users) */}
+      {/* Protected routes */}
       <Route
         element={
           <ProtectedRoute>
@@ -30,7 +30,7 @@ const App: React.FC = () => {
         }
       >
         <Route path="/skill" element={<SkillMonitoringPage />} />
-        <Route path="/roadmap" element={<RoadmapPage />} />
+        <Route path="/roadmap/:roadmapIndex" element={<RoadmapPage />} />
         <Route path="/assessment" element={<AssessmentPage />} />
         <Route path="/resume" element={<ResumeAnalyzer />} />
       </Route>

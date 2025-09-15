@@ -122,8 +122,8 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
 
   return (
-    <nav className="w-full px-4 sm:px-6 lg:px-4 py-2 bg-black/20 border-b border-white/10 shadow-lg fixed top-0 left-0 z-50">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <nav className="w-full px-4 sm:px-6 lg:px-4 py-2 bg-black/20 border-b border-white/10 shadow-lg fixed top-0 left-0 z-50 backdrop-blur-md">
+      <div className="flex items-center justify-between gap-4">
         {/* Left Side - Toggle Buttons with Sliding Background */}
         <div className="flex items-center gap-4">
           {/* Profile Logo */}
@@ -152,19 +152,20 @@ const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-4 sm:gap-6 ml-auto"
           >
             {/* What is NEXTskill Button */}
-            <HoverBorderGradient className="p-3 px-6">Home</HoverBorderGradient>
+            <HoverBorderGradient className="p-2 px-6">Home</HoverBorderGradient>
           </div>
         </div>
 
         {/* Right Side - What is NEXTskill Button + Logo */}
         <div
-          onClick={() => {
-            navigate("/about");
-          }}
+
           className="flex items-center gap-4 sm:gap-6 ml-auto"
         >
           {/* What is NEXTskill Button */}
-          <HoverBorderGradient>What is NEXTskill ?</HoverBorderGradient>
+          <HoverBorderGradient
+                    onClick={() => {
+            navigate("/about");
+          }}>What is NEXTskill ?</HoverBorderGradient>
 
           {/* NEXTskill Logo */}
           <div className="flex items-center">

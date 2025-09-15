@@ -410,74 +410,7 @@ const ResumeAnalyzer: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Mock data for analysis
-  const mockAnalysis: AnalysisData = {
-    atsScore: 72,
-    keywordsFound: ['React', 'JavaScript', 'TypeScript', 'Node.js', 'CSS', 'Git'],
-    keywordsMissing: ['Python', 'AWS', 'Docker', 'Kubernetes', 'MongoDB'],
-    readabilityScore: 85,
-    formattingScore: 68
-  };
 
-  const skillData: SkillData[] = [
-    { skill: 'React', resumeLevel: 80, marketDemand: 90 },
-    { skill: 'JavaScript', resumeLevel: 85, marketDemand: 95 },
-    { skill: 'TypeScript', resumeLevel: 70, marketDemand: 85 },
-    { skill: 'Python', resumeLevel: 20, marketDemand: 90 },
-    { skill: 'AWS', resumeLevel: 30, marketDemand: 80 },
-    { skill: 'Docker', resumeLevel: 15, marketDemand: 75 }
-  ];
-
-  const radarData = [
-    { subject: 'Frontend', A: 85, B: 90, fullMark: 100 },
-    { subject: 'Backend', A: 45, B: 80, fullMark: 100 },
-    { subject: 'Database', A: 60, B: 75, fullMark: 100 },
-    { subject: 'DevOps', A: 25, B: 70, fullMark: 100 },
-    { subject: 'Mobile', A: 30, B: 65, fullMark: 100 },
-    { subject: 'Testing', A: 55, B: 70, fullMark: 100 }
-  ];
-
-  const suggestions: Suggestion[] = [
-    {
-      id: '1',
-      category: 'Technical Skills',
-      title: 'Add Cloud Computing Skills',
-      description: 'Include AWS, Azure, or GCP experience to match current market demands.',
-      severity: 'Critical',
-      icon: <Code className="w-5 h-5" />
-    },
-    {
-      id: '2',
-      category: 'Keywords',
-      title: 'Include Industry Keywords',
-      description: 'Add keywords like "Agile", "Microservices", and "CI/CD" to improve ATS scanning.',
-      severity: 'Recommended',
-      icon: <Target className="w-5 h-5" />
-    },
-    {
-      id: '3',
-      category: 'Formatting',
-      title: 'Improve Section Headers',
-      description: 'Use consistent formatting for section headers and bullet points.',
-      severity: 'Recommended',
-      icon: <Palette className="w-5 h-5" />
-    },
-    {
-      id: '4',
-      category: 'Experience',
-      title: 'Quantify Achievements',
-      description: 'Add metrics and numbers to demonstrate impact of your work.',
-      severity: 'Critical',
-      icon: <TrendingUp className="w-5 h-5" />
-    },
-    {
-      id: '5',
-      category: 'Technical Skills',
-      title: 'Add Database Experience',
-      description: 'Include experience with SQL, MongoDB, or other database technologies.',
-      severity: 'Optional',
-      icon: <Code className="w-5 h-5" />
-    }
-  ];
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -740,54 +673,6 @@ const ResumeAnalyzer: React.FC = () => {
               </div>
             </div>
 
-            {/* Skill Match Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Radar Chart */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <h3 className="text-xl font-semibold text-white mb-6 text-center">Skills Overview</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <RadarChart data={radarData}>
-                    <PolarGrid stroke="#374151" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#ffffff', fontSize: 12 }} />
-                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#9CA3AF', fontSize: 10 }} />
-                    <Radar name="Your Skills" dataKey="A" stroke="#a855f7" fill="#a855f7" fillOpacity={0.2} strokeWidth={2} />
-                    <Radar name="Market Demand" dataKey="B" stroke="#6366f1" fill="#6366f1" fillOpacity={0.1} strokeWidth={2} />
-                  </RadarChart>
-                </ResponsiveContainer>
-                <div className="flex justify-center gap-4 mt-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                    <span className="text-gray-300">Your Skills</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-indigo-400 rounded-full"></div>
-                    <span className="text-gray-300">Market Demand</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bar Chart */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <h3 className="text-xl font-semibold text-white mb-6 text-center">Skill Gap Analysis</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={skillData} layout="horizontal">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis type="number" domain={[0, 100]} tick={{ fill: '#ffffff', fontSize: 10 }} />
-                    <YAxis dataKey="skill" type="category" tick={{ fill: '#ffffff', fontSize: 10 }} width={80} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#1f2937',
-                        border: '1px solid #374151',
-                        borderRadius: '8px',
-                        color: '#ffffff'
-                      }}
-                    />
-                    <Bar dataKey="resumeLevel" fill="#a855f7" name="Your Level" />
-                    <Bar dataKey="marketDemand" fill="#6366f1" name="Market Demand" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
 
             {/* Improvement Suggestions */}
             <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
@@ -840,7 +725,7 @@ const ResumeAnalyzer: React.FC = () => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;

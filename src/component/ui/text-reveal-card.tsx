@@ -70,45 +70,6 @@ export const TextRevealCard = ({
       )}
     >
       <div className="h-40 w-[40rem] relative flex items-center justify-center overflow-hidden text-center">
-        {/* Reveal Text */}
-        <motion.div
-          style={{
-            width: "100%",
-          }}
-          animate={
-            isMouseOver
-              ? {
-                  opacity: widthPercentage > 0 ? 1 : 0,
-                  clipPath: `inset(0 ${100 - widthPercentage}% 0 0)`,
-                }
-              : {
-                  clipPath: `inset(0 ${100 - widthPercentage}% 0 0)`,
-                }
-          }
-          transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="absolute bg-black/90 z-20 will-change-transform flex justify-center"
-        >
-          <p
-            style={{
-              textShadow: "4px 4px 15px rgba(0,0,0,0.5)",
-            }}
-            className="text-base sm:text-[3rem] py-10 font-bold text-blue-500 bg-clip-text bg-gradient-to-b from-white to-neutral-300 text-center"
-          >
-            {revealText}
-          </p>
-        </motion.div>
-
-        {/* Divider Line */}
-        <motion.div
-          animate={{
-            left: `${widthPercentage}%`,
-            rotate: `${rotateDeg}deg`,
-            opacity: widthPercentage > 0 ? 1 : 0,
-          }}
-          transition={isMouseOver ? { duration: 0 } : { duration: 0.4 }}
-          className="h-40 w-[8px] bg-gradient-to-b from-transparent via-neutral-800 to-transparent absolute z-50 will-change-transform"
-        ></motion.div>
-
         {/* Base Text */}
         <div className="overflow-hidden flex justify-center [mask-image:linear-gradient(to_bottom,transparent,white,transparent)]">
           <p className="text-sm sm:text-[3rem] py-10 font-bold bg-clip-text text-transparent bg-[#323238] text-center">
@@ -118,32 +79,6 @@ export const TextRevealCard = ({
         </div>
       </div>
     </div>
-  );
-};
-
-export const TextRevealCardTitle = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <h2 className={twMerge("text-white text-lg mb-2", className)}>
-      {children}
-    </h2>
-  );
-};
-
-export const TextRevealCardDescription = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <p className={twMerge("text-[#a9a9a9] text-sm", className)}>{children}</p>
   );
 };
 
