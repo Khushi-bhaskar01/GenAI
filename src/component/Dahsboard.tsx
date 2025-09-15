@@ -630,15 +630,15 @@ const Dashboard: React.FC<ProfilePanelProps> = ({
         onSkillMonitor?.();
       },
     },
-    {
-      icon: BookOpen,
-      label: "Course Library",
-      onClick: () => {
-        navigate("/");
-        onClose();
-        onCourseLibrary?.();
-      },
-    },
+    // {
+    //   icon: BookOpen,
+    //   label: "Course Library",
+    //   onClick: () => {
+    //     navigate("/");
+    //     onClose();
+    //     onCourseLibrary?.();
+    //   },
+    // },
     {
       icon: Map,
       label: "Roadmap",
@@ -657,15 +657,15 @@ const Dashboard: React.FC<ProfilePanelProps> = ({
         onAssessments?.();
       },
     },
-    // {
-    //   icon: File,
-    //   label: "Resume",
-    //   onClick: () => {
-    //     navigate("/resume");
-    //     onClose();
-    //     onResume?.();
-    //   },
-    // },
+    {
+      icon: File,
+      label: "Resume",
+      onClick: () => {
+        navigate("/resume");
+        onClose();
+        onResume?.();
+      },
+    },
     // {
     //   icon: Settings,
     //   label: "Settings",
