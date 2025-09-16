@@ -8,13 +8,9 @@ import { GlowingEffect } from "../component/ui/glowing-effect";
 import { TextHoverEffect } from "../component/ui/text-hover-effect";
 import { AnimatedTooltipPreview } from "../component/Connect-team";
 import { WavyBackground } from "../component/ui/wavy-background";
-import {
-  TextRevealCard,
-  TextRevealCardDescription,
-  TextRevealCardTitle,
-} from "../component/ui/text-reveal-card";
+import { TextRevealCard } from "../component/ui/text-reveal-card";
 import { HoverBorderGradient } from "../component/ui/hover-border-gradient";
-import { Rocket, ClipboardCheck, Map} from 'lucide-react'
+import { Rocket, ClipboardCheck, Map } from "lucide-react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -35,7 +31,7 @@ const Home: React.FC = () => {
             We Don’t Show You the Future <br />
             <div className="w-3xl m-auto border-white border-3 mt-6"></div>
             <div className="h-[7rem] sm:h-[15rem] flex items-center justify-center p-0">
-              <TextHoverEffect text="We Built It" />
+              <TextHoverEffect text="We Build It" />
             </div>
           </motion.h1>
           <motion.p
@@ -124,20 +120,20 @@ const Home: React.FC = () => {
                     <TextRevealCard
                       text="Empower Your Skills With NEXTskill"
                       revealText=""
-                    >
-                    </TextRevealCard>
+                    ></TextRevealCard>
                   </div>
 
                   {/* button */}
                   <div className="flex justify-center items-center">
-                    <HoverBorderGradient
-                      onClick={() => {
-                        navigate("/skill");
-                      }}
-                    >
+                    <HoverBorderGradient>
                       <div className=" bg-black flex justify-between items-center gap-4">
                         <p className="text-5xl">Get Started</p>
-                        <div className="w-14 h-14 bg-blue-500 rounded-full flex justify-between items-center hover:bg-blue-700">
+                        <div
+                          className="w-14 h-14 bg-blue-500 rounded-full flex justify-between items-center hover:bg-blue-700"
+                          onClick={() => {
+                            navigate("/skill");
+                          }}
+                        >
                           <GoArrowUpRight
                             className="m-auto hover:scale-110"
                             size={40}

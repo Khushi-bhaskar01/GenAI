@@ -203,13 +203,13 @@ const NEXTskillLanding: React.FC = () => {
 
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
             <button
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/")}
               className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105"
             >
               Get Started
             </button>
             <button
-              onClick={() => navigate("/roadmap")}
+              onClick={() => navigate("/roadmap/0")}
               className="px-8 py-4 bg-transparent border-2 border-gray-600 text-white hover:border-gray-400 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105"
             >
               Explore Roadmaps
@@ -279,7 +279,7 @@ const NEXTskillLanding: React.FC = () => {
                 className="flex flex-col md:flex-row md:items-start gap-8"
               >
                 {/* Step Number Circle */}
-                <div className="flex-shrink-0 w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold">
+                <div className="flex-shrink-0 w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold">
                   {step.step}
                 </div>
 
