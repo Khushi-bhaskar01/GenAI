@@ -248,7 +248,7 @@ const SkillMonitoringPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 pt-25 font-sans">
+    <div className="min-h-screen p-6 pt-6 font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Error Display */}
         {error && (
@@ -257,8 +257,8 @@ const SkillMonitoringPage: React.FC = () => {
           </div>
         )}
         <div className="flex justify-center items-center w-full m-auto p-10">
-          <div className="relative inline-block">
-            <h1 className="text-5xl font-bold text-white mb-4">
+          <div className="relative inline-block my-12">
+            <h1 className="text-5xl font-bold text-white mb-4 ">
               Moniter Your Skills With NEXTskill
             </h1>
             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-3xl h-1 bg-gradient-to-r from-transparent via-blue-800 to-transparent rounded-full"></div>

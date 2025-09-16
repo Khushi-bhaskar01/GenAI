@@ -45,7 +45,7 @@ const Home: React.FC = () => {
           </motion.p>
         </div>
       </section>
-      <WavyBackground />
+      {/* <WavyBackground /> */}
 
       {/* Roadmap divs */}
 

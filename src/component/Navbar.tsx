@@ -68,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
           {/* Profile Logo */}
           <button
             onClick={onProfileClick}
-            className="flex items-center justify-center w-12 h-12 border-1 border-gray-500 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 hover:border-blue-500/30 transition-all duration-300 hover:scale-105 cursor-pointer relative"
+            className="flex items-center justify-center w-12 h-12 border-2 border-white/70 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 hover:border-blue-500/30 transition-all duration-300 hover:scale-105 cursor-pointer relative"
             title={`${userData.displayName}${
               userData.email ? ` (${userData.email})` : ""
             }`}

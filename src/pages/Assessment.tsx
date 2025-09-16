@@ -363,9 +363,9 @@ const AssessmentPage: React.FC = () => {
       <div className="relative z-10 p-6 pt-25">
         <div className="max-w-4xl mx-auto">
           {/* Page Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-14">
             <div className="relative inline-block">
-              <h1 className="text-5xl font-bold text-white mb-4">
+              <h1 className="text-5xl font-bold text-white mb-2">
                 Skill Assessment
               </h1>
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent rounded-full"></div>
@@ -470,7 +470,7 @@ const AssessmentPage: React.FC = () => {
                               className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
                                 assessment.questions.length === 0
                                   ? "bg-gray-500/20 border border-gray-500/30 text-gray-500 cursor-not-allowed"
-                                  : "backdrop-blur-sm bg-blue-500/15 border border-blue-500/30 text-blue-300 hover:bg-blue-500/25"
+                                  : "backdrop-blur-sm bg-white/[0.05] border border-white/20 text-white hover:bg-blue-600 hover:text-white"
                               }`}
                             >
                               {assessment.questions.length === 0
@@ -573,7 +573,7 @@ const AssessmentPage: React.FC = () => {
                               className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
                                 assessment.questions.length === 0
                                   ? "bg-gray-500/20 border border-gray-500/30 text-gray-500 cursor-not-allowed"
-                                  : "backdrop-blur-sm bg-white/[0.05] border border-white/20 text-white hover:bg-white/[0.1]"
+                                  : "backdrop-blur-sm bg-white/[0.05] border border-white/20 text-white hover:bg-blue-600 hover:text-white"
                               }`}
                             >
                               {assessment.questions.length === 0
