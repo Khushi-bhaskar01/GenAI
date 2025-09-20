@@ -124,7 +124,7 @@ const Footer: React.FC<FooterProps> = ({
         <div className="mt-8 pt-6 border-t border-white/10">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-xs">
-              © 2024 NEXTskill. All rights reserved.
+              © 2025 NEXTskill. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <button className="text-gray-400 hover:text-white text-xs transition-colors duration-300">
