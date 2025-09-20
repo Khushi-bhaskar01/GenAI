@@ -27,7 +27,6 @@ import {
   updateDoc,
   doc,
   getDocs,
-  getDoc
 } from "firebase/firestore";
 import type { User } from "firebase/auth";
 
@@ -37,13 +36,13 @@ const storage = getStorage();
 // Real AI analysis function - calls your Python backend
 const analyzeResume = async (userId: string) => {
   try {
-    const response = await fetch('https://cv-erpv.onrender.com/analyze-cv', {
-      method: 'POST',
+    const response = await fetch("https://cv-erpv.onrender.com/analyze-cv", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId
+        user_id: userId,
       }),
     });
 
@@ -52,11 +51,15 @@ const analyzeResume = async (userId: string) => {
     }
 
     const result = await response.json();
-    console.log('Backend analysis result:', result);
-    
+    console.log("Backend analysis result:", result);
+
     return result.analysis;
   } catch (error) {
-    console.error('Analysis error:', error);
+    if (error instanceof Error) {
+      console.error("Analysis error:", error.message);
+    } else {
+      console.error("Unknown analysis error:", error);
+    }
     throw error;
   }
 };
@@ -118,7 +121,6 @@ const ResumeAnalyzer = () => {
       return;
     }
 
-    // Listen to resume changes
     const resumeQuery = query(
       collection(db, "resumes"),
       where("uid", "==", user.uid),
@@ -139,12 +141,12 @@ const ResumeAnalyzer = () => {
           url: docData.resumeFile?.url || "",
           uploadedAt: docData.uploadedAt,
           updatedAt: docData.updatedAt,
-          oldStoragePath: docData.resumeFile?.storagePath
+          oldStoragePath: docData.resumeFile?.storagePath,
         };
 
         setResume(resumeData);
-        const mockFile = new File([''], resumeData.name, { type: resumeData.type });
-        Object.defineProperty(mockFile, 'size', { value: resumeData.size });
+        const mockFile = new File([""], resumeData.name, { type: resumeData.type });
+        Object.defineProperty(mockFile, "size", { value: resumeData.size });
         setUploadedFile(mockFile);
       } else {
         setResume(null);
@@ -152,13 +154,12 @@ const ResumeAnalyzer = () => {
       }
     });
 
-    // Listen to analysis changes from user collection
     const userDocRef = doc(db, "user", user.uid);
     const unsubscribeUser = onSnapshot(userDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const userData = docSnapshot.data();
         if (userData.resume) {
-          console.log('Analysis data from Firestore:', userData.resume);
+          console.log("Analysis data from Firestore:", userData.resume);
           setAnalysisData(userData.resume);
           setAnalysisError(null);
         }
@@ -175,14 +176,13 @@ const ResumeAnalyzer = () => {
   const handleFileUpload = useCallback(
     async (file: File) => {
       if (!file || !user) return;
-      
+
       setIsUploading(true);
       setUploadStatus("");
       setAnalysisData(null);
       setAnalysisError(null);
 
       try {
-        // Upload file to Firebase Storage
         const timestamp = Date.now();
         const storagePath = `resumes/${user.uid}/${timestamp}_${file.name}`;
         const storageRef = ref(storage, storagePath);
@@ -195,27 +195,30 @@ const ResumeAnalyzer = () => {
           size: file.size,
           type: file.type,
           url,
-          storagePath
+          storagePath,
         };
 
-        // Update or create resume document
         const existingResumeQuery = query(
           collection(db, "resumes"),
           where("uid", "==", user.uid)
         );
-        
+
         const existingResumes = await getDocs(existingResumeQuery);
-        
+
         if (!existingResumes.empty) {
           const existingDoc = existingResumes.docs[0];
           const existingData = existingDoc.data();
-          
+
           if (existingData.resumeFile?.storagePath) {
             try {
               const oldFileRef = ref(storage, existingData.resumeFile.storagePath);
               await deleteObject(oldFileRef);
             } catch (error) {
-              console.warn('Could not delete old file:', error);
+              if (error instanceof Error) {
+                console.warn("Could not delete old file:", error.message);
+              } else {
+                console.warn("Unknown error deleting old file:", error);
+              }
             }
           }
 
@@ -239,21 +242,26 @@ const ResumeAnalyzer = () => {
         setUploadedFile(file);
         setUploadStatus("success");
 
-        // Start analysis with backend
         setIsAnalyzing(true);
         try {
-          const analysis = await analyzeResume(user.uid);
-          console.log('Received analysis:', analysis);
-          // Analysis will be updated via Firestore listener
-        } catch (analysisError) {
-          console.error('Analysis failed:', analysisError);
-          setAnalysisError(`Analysis failed: ${analysisError.message}`);
+          await analyzeResume(user.uid);
+        } catch (error) {
+          if (error instanceof Error) {
+            console.error("Analysis failed:", error.message);
+            setAnalysisError(`Analysis failed: ${error.message}`);
+          } else {
+            console.error("Unknown analysis error:", error);
+            setAnalysisError("Analysis failed: Unknown error");
+          }
         } finally {
           setIsAnalyzing(false);
         }
-
       } catch (error) {
-        console.error("Upload failed:", error);
+        if (error instanceof Error) {
+          console.error("Upload failed:", error.message);
+        } else {
+          console.error("Unknown upload error:", error);
+        }
         setUploadStatus("error");
         setIsUploading(false);
       } finally {
@@ -266,458 +274,254 @@ const ResumeAnalyzer = () => {
     [user]
   );
 
-  // Trigger analysis for existing resume
   const triggerAnalysis = async () => {
     if (!user) return;
-    
+
     setIsAnalyzing(true);
     setAnalysisError(null);
-    
+
     try {
       await analyzeResume(user.uid);
     } catch (error) {
-      console.error('Analysis failed:', error);
-      setAnalysisError(`Analysis failed: ${error.message}`);
+      if (error instanceof Error) {
+        console.error("Analysis failed:", error.message);
+        setAnalysisError(`Analysis failed: ${error.message}`);
+      } else {
+        console.error("Unknown analysis error:", error);
+        setAnalysisError("Analysis failed: Unknown error");
+      }
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  const handleFileDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-      setDragOver(false);
-      const file = e.dataTransfer.files[0];
-      if (file && (file.type === 'application/pdf' || file.type.includes('document') || file.type === 'text/plain')) {
-        handleFileUpload(file);
-      } else {
-        alert("Please upload a PDF, Word document, or TXT file.");
-      }
-    },
-    [handleFileUpload]
-  );
-
-  const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) {
-        handleFileUpload(file);
-      }
-    },
-    [handleFileUpload]
-  );
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragOver(false);
-  };
-
-  const removeFile = async () => {
-    if (!user || !resume) return;
-
-    try {
-      if (resume.oldStoragePath) {
-        const storageRef = ref(storage, resume.oldStoragePath);
-        await deleteObject(storageRef);
-      }
-
-      await updateDoc(doc(db, "resumes", resume.id), {
-        resumeFile: null,
-        updatedAt: new Date(),
-      });
-
-      setResume(null);
-      setUploadedFile(null);
-      setAnalysisData(null);
-    } catch (error) {
-      console.error('Error removing file:', error);
-    }
-  };
-
-  const formatFileSize = (bytes: number): string => {
-    return (bytes / 1024 / 1024).toFixed(2);
-  };
-
-  const formatDate = (timestamp: any): string => {
-    if (!timestamp) return "";
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString();
-  };
-
-  const getSeverityColor = (severity: string) => {
-    switch (severity.toLowerCase()) {
-      case 'high':
-        return 'text-red-400 bg-red-400/10 border-red-400/30';
-      case 'medium':
-        return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30';
-      case 'low':
-        return 'text-green-400 bg-green-400/10 border-green-400/30';
-      default:
-        return 'text-gray-400 bg-gray-400/10 border-gray-400/30';
-    }
-  };
-
-  const getCategoryIcon = (category: string) => {
-    const iconClass = "w-6 h-6 text-blue-400";
-    switch (category.toLowerCase()) {
-      case 'keywords':
-        return <Target className={iconClass} />;
-      case 'formatting':
-      case 'format':
-        return <Palette className={iconClass} />;
-      case 'content':
-        return <FileText className={iconClass} />;
-      case 'structure':
-        return <Eye className={iconClass} />;
-      default:
-        return <Lightbulb className={iconClass} />;
-    }
-  };
-
   return (
     <div className="min-h-screen p-6 pt-8 bg-gradient-to-br from-slate-900 via-slate-900 to-black-900">
-      <div className="max-w-6xl mx-auto">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <div className="relative inline-block">
-            <h1 className="text-5xl font-bold text-white mb-4">
-              Resume Analyzer
-            </h1>
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-black-400 rounded-full"></div>
-          </div>
-          <p className="text-gray-300 text-lg italic mt-6">
-            Get AI-powered insights to optimize your resume for ATS systems
-          </p>
-        </div>
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-white flex items-center gap-3">
+          <FileText className="w-10 h-10 text-blue-400" />
+          Resume Analyzer
+        </h1>
 
         {/* Upload Section */}
-        <div className="mb-12">
-          <div
-            className={`bg-black/40 rounded-2xl p-8 backdrop-blur-sm border-2 border-dashed transition-all duration-300 ${
-              dragOver 
-                ? 'border-blue-400 bg-blue-400/5' 
-                : 'border-gray-600 hover:border-gray-500'
-            } ${isUploading ? "pointer-events-none opacity-70" : ""}`}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleFileDrop}
-          >
-            {isUploading ? (
-              <div className="text-center">
-                <RefreshCw className="w-16 h-16 text-blue-400 mx-auto mb-4 animate-spin" />
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  Uploading your resume...
-                </h3>
-                <p className="text-gray-300">
-                  Please wait while we process your file
-                </p>
-              </div>
-            ) : !uploadedFile ? (
-              <div className="text-center">
-                <Upload className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">
-                  Upload Your Resume
-                </h3>
-                <p className="text-gray-300 mb-6">
-                  Drag and drop your resume here, or click to browse
-                </p>
-                <div className="mb-4">
-                  <span className="text-sm text-gray-400">
-                    Supported formats: PDF, DOCX, TXT • Max 10MB
-                  </span>
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".pdf,.docx,.txt,.doc"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-8 py-3 bg-blue-400 hover:bg-blue-500 text-black rounded-xl font-semibold transition-all duration-300 hover:scale-105"
-                >
-                  Choose File
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <FileText className="w-12 h-12 text-blue-400" />
-                  <div>
-                    <h4 className="text-lg font-semibold text-white">{uploadedFile.name}</h4>
-                    <p className="text-gray-400 text-sm">{formatFileSize(uploadedFile.size)} MB</p>
-                    {resume && resume.uploadedAt && (
-                      <p className="text-gray-500 text-xs">
-                        {resume.updatedAt && resume.updatedAt !== resume.uploadedAt 
-                          ? `Updated: ${formatDate(resume.updatedAt)}`
-                          : `Uploaded: ${formatDate(resume.uploadedAt)}`
-                        }
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {resume?.url && (
-                    <a
-                      href={resume.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                    >
-                      View
-                    </a>
-                  )}
-                  {!isAnalyzing && !analysisData && (
-                    <button
-                      onClick={triggerAnalysis}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
-                    >
-                      Analyze
-                    </button>
-                  )}
-                  <button
-                    onClick={removeFile}
-                    className="p-2 text-gray-400 hover:text-red-400 transition-colors"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+        <div
+          className={`border-2 border-dashed rounded-xl p-8 mb-8 text-center transition-colors ${
+            dragOver ? "border-blue-400 bg-blue-400/10" : "border-slate-700 bg-slate-800/50"
+          }`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragOver(false);
+            const file = e.dataTransfer.files[0];
+            if (file) handleFileUpload(file);
+          }}
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept=".pdf,.doc,.docx"
+            onChange={(e) => {
+              if (e.target.files?.[0]) handleFileUpload(e.target.files[0]);
+            }}
+          />
+          <Upload className="w-12 h-12 mx-auto mb-4 text-blue-400" />
+          <p className="text-slate-300">
+            Drag and drop your resume here, or click to browse
+          </p>
+          <p className="text-slate-500 text-sm mt-2">Supports PDF, DOC, DOCX</p>
         </div>
 
-        {/* Status Messages */}
-        {uploadStatus && (
-          <div className={`mb-8 p-4 rounded-lg flex items-center space-x-3 ${
-            uploadStatus === "success" 
-              ? "bg-green-900/30 border border-green-500/30" 
-              : "bg-red-900/30 border border-red-500/30"
-          }`}>
-            {uploadStatus === "success" ? (
-              <>
-                <CheckCircle className="text-green-400" size={20} />
-                <p className="text-green-300">
-                  {resume ? "Resume updated successfully!" : "Resume uploaded successfully!"}
-                </p>
-              </>
-            ) : (
-              <>
-                <AlertCircle className="text-red-400" size={20} />
-                <p className="text-red-300">Upload failed. Please try again.</p>
-              </>
-            )}
+        {/* Status */}
+        {isUploading && (
+          <div className="mb-6 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center gap-2">
+            <RefreshCw className="w-5 h-5 animate-spin" />
+            Uploading your resume...
           </div>
         )}
 
-        {/* Analysis Error */}
+        {uploadStatus === "success" && (
+          <div className="mb-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            Resume uploaded successfully!
+          </div>
+        )}
+
+        {uploadStatus === "error" && (
+          <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            Upload failed. Please try again.
+          </div>
+        )}
+
+        {/* Resume Preview */}
+        {uploadedFile && resume && (
+          <div className="bg-slate-800/50 rounded-xl p-6 mb-8 border border-slate-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <FileText className="w-8 h-8 text-blue-400" />
+                <div>
+                  <h3 className="text-white font-medium">{resume.name}</h3>
+                  <p className="text-slate-400 text-sm">
+                    {(resume.size / 1024 / 1024).toFixed(2)} MB •{" "}
+                    {resume.type.toUpperCase()}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href={resume.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                  <Eye className="w-5 h-5 text-slate-400" />
+                </a>
+                <a
+                  href={resume.url}
+                  download
+                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                >
+                  <Download className="w-5 h-5 text-slate-400" />
+                </a>
+                <button
+                  onClick={triggerAnalysis}
+                  disabled={isAnalyzing}
+                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw
+                    className={`w-5 h-5 text-slate-400 ${
+                      isAnalyzing ? "animate-spin" : ""
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error */}
         {analysisError && (
-          <div className="mb-8 p-4 rounded-lg flex items-center space-x-3 bg-red-900/30 border border-red-500/30">
-            <AlertCircle className="text-red-400" size={20} />
-            <p className="text-red-300">{analysisError}</p>
-            <button
-              onClick={triggerAnalysis}
-              className="ml-auto px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-            >
-              Retry
-            </button>
+          <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            {analysisError}
           </div>
         )}
 
-        {/* Analysis Loading */}
+        {/* Analysis */}
         {isAnalyzing && (
-          <div className="text-center mb-12">
-            <div className="bg-black/40 rounded-2xl p-8 backdrop-blur-sm border border-gray-800/50">
-              <div className="animate-spin w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-white text-lg">Analyzing your resume with AI...</p>
-              <p className="text-gray-400 text-sm mt-2">This may take a few moments</p>
-            </div>
+          <div className="mb-6 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center gap-2">
+            <RefreshCw className="w-5 h-5 animate-spin" />
+            Analyzing your resume...
           </div>
         )}
 
-        {/* Analysis Results */}
-        {analysisData && !isAnalyzing && (
-          <div className="space-y-12">
-            {/* Analysis Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* ATS Score */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <div className="text-center">
-                  <Target className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">ATS Score</h3>
-                  <div className="text-4xl font-bold text-white mb-4">
-                    {analysisData.Analysis?.atsScore || '0'}%
-                  </div>
-                  <div className="w-full bg-gray-800 rounded-full h-2">
-                    <div
-                      className="h-2 bg-blue-400 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${analysisData.Analysis?.atsScore || 0}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-2">Applicant Tracking System compatibility</p>
+        {analysisData && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Scores */}
+            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-lg font-medium mb-4 text-white flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-400" />
+                Scores
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between text-slate-300">
+                  <span>ATS Score:</span>
+                  <span className="text-white font-medium">
+                    {analysisData.Analysis.atsScore}%
+                  </span>
                 </div>
-              </div>
-
-              {/* Content Score */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <div className="text-center">
-                  <FileText className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Content Score</h3>
-                  <div className="text-4xl font-bold text-white mb-4">
-                    {analysisData.Analysis?.contentScore || '0'}%
-                  </div>
-                  <div className="w-full bg-gray-800 rounded-full h-2">
-                    <div
-                      className="h-2 bg-blue-400 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${analysisData.Analysis?.contentScore || 0}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-2">Content quality and relevance</p>
+                <div className="flex justify-between text-slate-300">
+                  <span>Content Score:</span>
+                  <span className="text-white font-medium">
+                    {analysisData.Analysis.contentScore}%
+                  </span>
                 </div>
-              </div>
-
-              {/* Formatting Score */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <div className="text-center">
-                  <Palette className="w-12 h-12 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-white mb-2">Formatting</h3>
-                  <div className="text-4xl font-bold text-white mb-4">
-                    {analysisData.Analysis?.formattingScore || '0'}%
-                  </div>
-                  <div className="w-full bg-gray-800 rounded-full h-2">
-                    <div
-                      className="h-2 bg-blue-400 rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${analysisData.Analysis?.formattingScore || 0}%` }}
-                    ></div>
-                  </div>
-                  <p className="text-gray-400 text-sm mt-2">Visual consistency and layout</p>
+                <div className="flex justify-between text-slate-300">
+                  <span>Formatting Score:</span>
+                  <span className="text-white font-medium">
+                    {analysisData.Analysis.formattingScore}%
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Keywords Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Keywords Found */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6 text-green-400" />
-                  Keywords Found
-                </h3>
+            {/* Keywords */}
+            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-lg font-medium mb-4 text-white flex items-center gap-2">
+                <Palette className="w-5 h-5 text-purple-400" />
+                Keywords
+              </h3>
+              <div className="mb-4">
+                <p className="text-slate-400 text-sm mb-2">Found:</p>
                 <div className="flex flex-wrap gap-2">
-                  {(analysisData.Analysis?.keywordsFound || []).map((keyword, index) => (
+                  {analysisData.Analysis.keywordsFound.map((kw, i) => (
                     <span
-                      key={index}
-                      className="px-3 py-1 bg-green-400/10 text-green-400 rounded-full text-sm border border-green-400/30"
+                      key={i}
+                      className="px-2 py-1 text-xs rounded-lg bg-green-500/10 text-green-400 border border-green-500/20"
                     >
-                      {keyword}
+                      {kw}
                     </span>
                   ))}
-                  {(!analysisData.Analysis?.keywordsFound || analysisData.Analysis.keywordsFound.length === 0) && (
-                    <span className="text-gray-400 text-sm">No keywords identified yet</span>
-                  )}
                 </div>
               </div>
-
-              {/* Keywords Missing */}
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <AlertTriangle className="w-6 h-6 text-red-400" />
-                  Missing Keywords
-                </h3>
+              <div>
+                <p className="text-slate-400 text-sm mb-2">Missing:</p>
                 <div className="flex flex-wrap gap-2">
-                  {(analysisData.Analysis?.keywordsMissing || []).map((keyword, index) => (
+                  {analysisData.Analysis.keywordsMissing.map((kw, i) => (
                     <span
-                      key={index}
-                      className="px-3 py-1 bg-red-400/10 text-red-400 rounded-full text-sm border border-red-400/30"
+                      key={i}
+                      className="px-2 py-1 text-xs rounded-lg bg-red-500/10 text-red-400 border border-red-500/20"
                     >
-                      {keyword}
+                      {kw}
                     </span>
                   ))}
-                  {(!analysisData.Analysis?.keywordsMissing || analysisData.Analysis.keywordsMissing.length === 0) && (
-                    <span className="text-gray-400 text-sm">No missing keywords identified</span>
-                  )}
                 </div>
               </div>
             </div>
 
-            {/* Improvement Suggestions */}
-            {analysisData.suggestions && analysisData.suggestions.length > 0 && (
-              <div className="bg-black/40 rounded-2xl p-6 backdrop-blur-sm border border-gray-800/50">
-                <h3 className="text-2xl font-semibold text-white mb-8 text-center">Improvement Suggestions</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {analysisData.suggestions.map((suggestion, index) => (
-                    <div
-                      key={suggestion.id}
-                      className="bg-black/30 rounded-lg p-4 border border-gray-700/50 hover:border-gray-600 transition-all duration-300"
-                      style={{
-                        animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
-                      }}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0">
-                          {getCategoryIcon(suggestion.category)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between mb-2">
-                            <h4 className="font-semibold text-white">{suggestion.title}</h4>
-                            <span className={`text-xs px-2 py-1 rounded-full border ${getSeverityColor(suggestion.severity)}`}>
-                              {suggestion.severity}
-                            </span>
-                          </div>
-                          <p className="text-gray-300 text-sm mb-2">{suggestion.description}</p>
-                          <span className="text-xs px-2 py-1 bg-gray-800 text-gray-400 rounded-full">
-                            {suggestion.category}
-                          </span>
-                        </div>
-                      </div>
+            {/* Suggestions */}
+            <div className="md:col-span-2 bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+              <h3 className="text-lg font-medium mb-4 text-white flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-yellow-400" />
+                Suggestions
+              </h3>
+              <div className="space-y-3">
+                {analysisData.suggestions.map((sug, i) => (
+                  <div
+                    key={i}
+                    className="p-4 rounded-lg bg-slate-900/50 border border-slate-700"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-white font-medium flex items-center gap-2">
+                        {sug.severity === "high" && (
+                          <AlertTriangle className="w-4 h-4 text-red-400" />
+                        )}
+                        {sug.severity === "medium" && (
+                          <AlertCircle className="w-4 h-4 text-yellow-400" />
+                        )}
+                        {sug.severity === "low" && (
+                          <CheckCircle className="w-4 h-4 text-green-400" />
+                        )}
+                        {sug.title}
+                      </h4>
+                      <span className="text-xs px-2 py-1 rounded-lg bg-slate-800 text-slate-400">
+                        {sug.category}
+                      </span>
                     </div>
-                  ))}
-                </div>
+                    <p className="text-slate-400 text-sm">{sug.description}</p>
+                  </div>
+                ))}
               </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              
-              
-              <button 
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 px-8 py-3 bg-black-400 hover:bg-black-500 text-white rounded-xl font-semibold transition-all duration-300 hover:scale-105"
-              >
-                <Edit className="w-5 h-5" />
-                Reload to Upload NEW
-              </button>
             </div>
-          </div>
-        )}
-
-        {/* User Status */}
-        {!user && (
-          <div className="fixed bottom-4 right-4 p-4 bg-red-900/80 border border-red-500/30 rounded-lg shadow-lg backdrop-blur-sm">
-            <p className="text-red-300 text-sm">Please log in to save your resume</p>
           </div>
         )}
       </div>
-
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
     </div>
   );
 };
