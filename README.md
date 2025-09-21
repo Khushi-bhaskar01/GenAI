@@ -1,53 +1,81 @@
-# NEXTskill Frontend
+# 🚀 NEXTskill – AI-Powered Career Guidance Platform
 
-A modern web application built with React, TypeScript, and Firebase for skill assessment and monitoring.
+An intelligent web application that helps students and professionals assess skills, build resumes, and generate personalized career roadmaps.
+Built with React, TypeScript, Firebase, and Google Cloud, NEXTskill combines AI-driven insights with structured assessments to guide users toward their ideal career path.
 
-## Features
+---
 
-- User Authentication (Login/Signup)
-- Dashboard Interface
-- Skill Assessment System
-- Resume Builder
-- Skill Monitoring
-- Career Roadmap
-- Team Connection
+## 🎯 Problem Statement
 
-## Tech Stack
+Students & professionals today often struggle with direction. Existing platforms only provide aptitude tests or generic course lists.
+There’s no single system that looks at a user holistically — their CV, skills, and interests — and then continuously guides them with a structured, evolving roadmap.
 
-- React with TypeScript
-- Vite as build tool
-- Firebase Authentication and Firestore
-- Custom UI Components
+---
 
-## Project Structure
+## 💡 Our Solution
 
-```
-src/
-├── assets/        # Static assets and data
-├── components/    # Reusable UI components
-├── context/       # React context providers
-├── firebase/      # Firebase configuration
-├── lib/           # Utility functions
-├── pages/         # Main application pages
-└── services/      # API and service layer
-```
+NEXTskill is an AI-driven Career Guidance Platform that:
 
-## Getting Started
+Analyzes user preferences, CVs, and skills
 
-### Prerequisites
+Runs dynamic skill validation assessments
 
-- Node.js (v14 or higher)
-- npm or yarn
+Generates a personalized, evolving roadmap
 
-### Installation
+Provides resume intelligence with ATS readability
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file with your Firebase configuration:
-   ```env
+Connects users with real-world opportunities (jobs & internships)
+
+## 🛠 Features
+
+🔑 Authentication – Secure login/signup with Firebase
+
+📊 Dashboard – Personalized user interface
+
+🧠 Dual Assessments – Skill tests + psychometric analysis
+
+📑 Resume Builder – Create or optimize resumes with AI suggestions
+
+📈 Skill Monitoring – Track progress in real-time
+
+🛤 Career Roadmap – AI-generated personalized growth path
+
+👥 Team Connection – Collaborate and grow together
+
+🌐 Government/Internship Opportunities – Integrated applications
+
+## 🖥 Tech Stack
+
+Frontend: React (TypeScript) + Vite
+
+Backend/Cloud: Firebase Auth, Firestore, Google Cloud (Vertex AI, Firestore, Firebase Hosting)
+
+UI: Custom Components + TailwindCSS / ShadCN
+
+AI/ML: Dynamic skill validation, CV parsing, and roadmap generation
+
+
+## 🚀 Getting Started
+Prerequisites
+
+Node.js (v16 or higher)
+
+npm or yarn
+
+Firebase Project
+
+Installation
+## Clone the repo
+git clone https://github.com/Khushi-bhaskar01/GenAI
+## Install dependencies
+cd NEXTskill
+npm install
+
+### Environment Setup
+
+Create a `.env` file in the root directory with your Firebase config:
+
+```env
    VITE_FIREBASE_API_KEY=your_api_key
    VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
    VITE_FIREBASE_PROJECT_ID=your_project_id
@@ -57,41 +85,44 @@ src/
    ```
 
 ### Development
-
-Run the development server:
-
-```bash
 npm run dev
-```
 
-The application will be available at `http://localhost:5173`
 
-### Building for Production
+Open: http://localhost:5173
 
-```bash
+Production Build
 npm run build
-```
 
-## Main Components
+### 🔑 Key Components
 
-- `Layout.tsx`: Main layout wrapper with navigation
-- `Navbar.tsx`: Navigation bar for authenticated users
-- `NavbarLogin.tsx`: Navigation bar for non-authenticated users
-- `Dashboard.tsx`: User dashboard interface
-- `ProtectedRoute.tsx`: Route protection for authenticated pages
+Layout.tsx – Main layout wrapper
 
-## Authentication
+Navbar.tsx – Authenticated user navigation
 
-The application uses Firebase Authentication for user management. The `authContext.tsx` provides authentication state and methods throughout the application.
+NavbarLogin.tsx – Guest navigation
 
-## Contributing
+Dashboard.tsx – User dashboard
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+ProtectedRoute.tsx – Auth-protected routing
 
-## License
+ResumeAnalyzer.tsx – Resume insights & ATS checks
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🤝 Contributors
+
+
+We thank the amazing people who made **NEXTskill** possible 🚀  
+
+- [Prapti Gupta](https://github.com/prapti-gupta-1805)  
+- [Hritik](#)  
+- [Akshat](https://github.com/Akshat030307)  
+- [Aditya](https://github.com/aditya1010110000)  
+- [Khushi Bhaskar](https://github.com/Khushi-bhaskar01)  
+
+
+### 📜 License
+
+This project is licensed under the MIT License.
+
+## ⭐ Acknowledgements
+
+Built with 🤍 and innovation for the **Gen AI Hackathon** 🚀  
